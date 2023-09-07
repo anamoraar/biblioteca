@@ -279,8 +279,50 @@ DELETE FROM genero WHERE genero_id = 1;
 DELETE FROM nacionalidad WHERE nacionalidad_id = 1;
 */
 
+CREATE TABLE bitacora_libro (
+    cambio_id NUMBER (5),
+    libro_id NUMBER (5),
+    fecha_hora_cambio TIMESTAMP,
+    usuario VARCHAR2(50),
+    modificacion VARCHAR2(15),
+    CONSTRAINT bitacora_libro_pk PRIMARY KEY (cambio_id)
+);
+
+CREATE SEQUENCE cambio_bitacora_seq
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+
+CREATE OR REPLACE TRIGGER tiud_bitacora_libro
+AFTER INSERT OR UPDATE OR DELETE ON libro
+FOR EACH ROW
+DECLARE
+    v_accion VARCHAR2(10);
+BEGIN
+    IF INSERTING THEN
+        v_accion := 'INSERT';
+    ELSIF UPDATING THEN
+        v_accion := 'UPDATE';
+    ELSIF DELETING THEN
+        v_accion := 'DELETE';
+    END IF;
+
+    INSERT INTO bitacora_libro (cambio_id, libro_id, fecha_hora_cambio, usuario, modificacion)
+    VALUES (cambio_bitacora_seq.NEXTVAL, :NEW.libro_id, SYSTIMESTAMP, USER, v_accion);
+END;
+/
+
+
+
+
+
+
 /*    
+-- Eliminar trigger
+DROP TRIGGER tiud_bitacora_libro;
 -- Eliminar secuencias 
+DROP SEQUENCE cambio_bitacora_seq;
 DROP SEQUENCE nacionalidad_seq;
 DROP SEQUENCE autor_seq;
 DROP SEQUENCE editorial_seq;
@@ -289,9 +331,10 @@ DROP SEQUENCE libro_seq;
 DROP SEQUENCE prestamo_seq;
 
 --Eliminar tablas
+DROP TABLE bitacora_libro;
 DROP TABLE prestamo_libro;
 DROP TABLE prestamo;
-DROP TABLE usuario
+DROP TABLE usuario;
 DROP TABLE libro;
 DROP TABLE autor;
 DROP TABLE nacionalidad;
