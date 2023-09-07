@@ -1,6 +1,6 @@
---Proyecto 1: Casey Baeza, Adri�n Molina, Ana Laura Mora
+--Proyecto 1: Casey Baeza, Adrián Molina, Ana Laura Mora
 
---Creaci�n de tablas
+--Creación de tablas
 CREATE TABLE nacionalidad(
     nacionalidad_id NUMBER(3) NOT NULL,
     nombre VARCHAR2 (30) NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE prestamo_libro(
     CONSTRAINT prestamo_libro_libro_fk FOREIGN KEY (libro_id) REFERENCES libro(libro_id)
 );
     
---Creaci�n de secuencias
+--Creación de secuencias
 CREATE SEQUENCE nacionalidad_seq
     START WITH 1 
     INCREMENT BY 1
@@ -135,7 +135,7 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
             COMMIT;
             EXCEPTION WHEN OTHERS THEN
                 IF SQLCODE=-1 THEN
-                    DBMS_OUTPUT.put_line ('Ya existe un usuario de c�dula ' || p_cedula);
+                    DBMS_OUTPUT.put_line ('Ya existe un usuario de cédula ' || p_cedula);
                 ELSE
                     DBMS_OUTPUT.put_line (SQLERRM);
                 END IF;
@@ -157,13 +157,126 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
         END cant_prestamos;
 
 END usuario_paq;
+/
+
+CREATE OR REPLACE PACKAGE libro_paq AS
+    -- Procedure para crear un libro
+    PROCEDURE agregar_libro(
+        p_titulo libro.titulo%TYPE,
+        p_anyo_publicacion libro.anyo_publicacion%TYPE,
+        p_descripcion libro.descripcion%TYPE,
+        p_disponibilidad libro.disponibilidad%TYPE,
+        p_autor_id libro.autor_id%TYPE,
+        p_genero_id libro.genero_id%TYPE,
+        p_editorial_id libro.editorial_id%TYPE);
+    
+    -- Procedure para actualizar un libro
+    PROCEDURE actualizar_libro(
+        p_libro_id libro.libro_id%TYPE,
+        p_titulo libro.titulo%TYPE,
+        p_anyo_publicacion libro.anyo_publicacion%TYPE,
+        p_descripcion libro.descripcion%TYPE,
+        p_disponibilidad libro.disponibilidad%TYPE,
+        p_autor_id libro.autor_id%TYPE,
+        p_genero_id libro.genero_id%TYPE,
+        p_editorial_id libro.editorial_id%TYPE);
+    
+    -- Procedure para eliminar un libro
+    PROCEDURE eliminar_libro(p_libro_id libro.libro_id%TYPE);
+    -- Función para contar cuántos clientes distintos han solicitado el libro a préstamo
+    FUNCTION cant_clientes_prestamo(p_libro_id libro.libro_id%TYPE) RETURN NUMBER;
+END libro_paq;
+/
+
+CREATE OR REPLACE PACKAGE BODY libro_paq AS
+    -- Procedure para crear un libro
+    PROCEDURE agregar_libro(
+        p_titulo libro.titulo%TYPE,
+        p_anyo_publicacion libro.anyo_publicacion%TYPE,
+        p_descripcion libro.descripcion%TYPE,
+        p_disponibilidad libro.disponibilidad%TYPE,
+        p_autor_id libro.autor_id%TYPE,
+        p_genero_id libro.genero_id%TYPE,
+        p_editorial_id libro.editorial_id%TYPE) AS
+    BEGIN
+        INSERT INTO libro VALUES (libro_seq.NEXTVAL, p_titulo, p_anyo_publicacion, p_descripcion, p_disponibilidad, p_autor_id, p_genero_id, p_editorial_id);
+        COMMIT;
+		EXCEPTION WHEN OTHERS THEN
+                IF SQLCODE=-1 THEN
+                    DBMS_OUTPUT.put_line ('Ya existe un libro con el mismo título' || p_titulo);
+                ELSE
+                    DBMS_OUTPUT.put_line (SQLERRM);
+                END IF;
+    END agregar_libro;
+
+    -- Procedure para actualizar un libro
+    PROCEDURE actualizar_libro(
+        p_libro_id libro.libro_id%TYPE,
+        p_titulo libro.titulo%TYPE,
+        p_anyo_publicacion libro.anyo_publicacion%TYPE,
+        p_descripcion libro.descripcion%TYPE,
+        p_disponibilidad libro.disponibilidad%TYPE,
+        p_autor_id libro.autor_id%TYPE,
+        p_genero_id libro.genero_id%TYPE,
+        p_editorial_id libro.editorial_id%TYPE) AS
+    BEGIN
+        UPDATE libro
+        SET titulo = p_titulo,
+            anyo_publicacion = p_anyo_publicacion,
+            descripcion = p_descripcion,
+            disponibilidad = p_disponibilidad,
+            autor_id = p_autor_id,
+            genero_id = p_genero_id,
+            editorial_id = p_editorial_id
+        WHERE libro_id = p_libro_id;
+        COMMIT;
+    END actualizar_libro;
+
+    -- Procedure para eliminar un libro
+    PROCEDURE eliminar_libro(p_libro_id libro.libro_id%TYPE) AS
+    BEGIN
+        DELETE FROM libro WHERE libro_id = p_libro_id;
+        COMMIT;
+    END eliminar_libro;
+
+    -- Función para contar cuántos clientes distintos han solicitado el libro a préstamo
+    FUNCTION cant_clientes_prestamo(p_libro_id libro.libro_id%TYPE) RETURN NUMBER IS
+        v_count NUMBER(3);
+    BEGIN
+        SELECT COUNT(DISTINCT pres.cedula) INTO v_count
+        	FROM prestamo pres
+        	INNER JOIN prestamo_libro pl ON pres.prestamo_id = pl.prestamo_id
+        	WHERE pl.libro_id = p_libro_id;
+        RETURN v_count;
+    END cant_clientes_prestamo;
+
+END libro_paq;
+/
 
 /*
+--Pruebas Paquete usuario
 SET SERVEROUTPUT ON;
 exec usuario_paq.agregar_usuario(208300885, 'Ana', 'Mora', 'amora@gmail.com', 'freib12');
 select * from usuario;
 select usuario_paq.cant_prestamos(208300885) as prestamos from dual;
 exec usuario_paq.eliminar_usuario(208300885);
+
+--Pruebas Paquete libro
+INSERT INTO nacionalidad VALUES (1, 'Nacionalidad 1');
+INSERT INTO autor VALUES (1, 'Autor 1', 'Apellido 1', 1);
+INSERT INTO editorial VALUES (1, 'Editorial 1');
+INSERT INTO genero VALUES (1, 'Género 1');
+
+select * from libro;
+EXEC libro_paq.agregar_libro('Harry Potter', 2023, 'Description 1', 10, 1, 1, 1);
+EXEC libro_paq.actualizar_libro(1, 'Harry Potter 2', 2024, 'Description 2', 15, 1, 1, 1);
+EXEC libro_paq.eliminar_libro(1);
+select libro_paq.cant_clientes_prestamo(2) as prestamos from dual;
+
+DELETE FROM autor WHERE autor_id = 1;
+DELETE FROM editorial WHERE editorial_id = 1;
+DELETE FROM genero WHERE genero_id = 1;
+DELETE FROM nacionalidad WHERE nacionalidad_id = 1;
 */
 
 /*    
@@ -185,4 +298,3 @@ DROP TABLE nacionalidad;
 DROP TABLE genero;
 DROP TABLE editorial;
 */
-
