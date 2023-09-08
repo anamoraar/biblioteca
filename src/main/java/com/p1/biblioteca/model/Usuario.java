@@ -21,6 +21,20 @@ public class Usuario {
     @Column(name = "contrasenya", nullable = false)
     private String contrasenya;
 
-    // Getters y setters
+    public Long getCedula() {
+        return cedula;
+    }
+
+    public String getNombreCompleto() {
+        return nombre+" "+apellido;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }
 
