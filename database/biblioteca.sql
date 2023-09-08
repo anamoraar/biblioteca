@@ -167,6 +167,35 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
             RETURN prestamos_count;
         END cant_prestamos;
 
+    PROCEDURE iniciar_sesion(
+            p_email usuario.email%TYPE,
+            p_contrasenya usuario.contrasenya%TYPE) AS
+        v_hash_contrasenya RAW(16);
+        v_hex_contrasenya VARCHAR2(32);
+        BEGIN
+            -- Calcular el hash MD5 de la contraseña ingresada
+            v_hash_contrasenya := DBMS_OBFUSCATION_TOOLKIT.MD5(input_string => p_contrasenya);
+            v_hex_contrasenya := UTL_RAW.CAST_TO_VARCHAR2(v_hash_contrasenya);
+
+            -- Verificar si el correo y la contraseña coinciden en la base de datos
+            DECLARE
+                v_email usuario.email%TYPE;
+            BEGIN
+                SELECT email
+                INTO v_email
+                FROM usuario
+                WHERE email = p_email AND contrasenya = v_hex_contrasenya;
+                
+                IF v_email IS NOT NULL THEN
+                    DBMS_OUTPUT.put_line ('Inicio de sesión exitoso para ' || p_email);
+                ELSE
+                    DBMS_OUTPUT.put_line ('Credenciales incorrectas');
+                END IF;
+            EXCEPTION WHEN NO_DATA_FOUND THEN
+                DBMS_OUTPUT.put_line ('Credenciales incorrectas');
+            END;
+        END iniciar_sesion;
+
 END usuario_paq;
 /
 
