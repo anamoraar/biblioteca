@@ -131,14 +131,25 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
             p_email usuario.email%TYPE,
             p_contrasenya usuario.contrasenya%TYPE) AS
         BEGIN
-            INSERT INTO usuario VALUES(p_cedula, p_nombre, p_apellido, p_email, p_contrasenya);
+        DECLARE
+            v_hash_contrasenya RAW(16); -- MD5 produce un hash RAW de 16 bytes
+            v_hex_contrasenya VARCHAR2(32); -- MD5 produce una cadena hexadecimal de 32 caracteres
+        BEGIN
+            -- Calcular el hash MD5 de la contraseña
+            v_hash_contrasenya := DBMS_OBFUSCATION_TOOLKIT.MD5(input_string => p_contrasenya);
+            
+            -- Convertir el hash RAW a una cadena hexadecimal
+            v_hex_contrasenya := UTL_RAW.CAST_TO_VARCHAR2(v_hash_contrasenya);
+
+            INSERT INTO usuario VALUES(p_cedula, p_nombre, p_apellido, p_email, v_hex_contrasenya);
             COMMIT;
             EXCEPTION WHEN OTHERS THEN
                 IF SQLCODE=-1 THEN
-                    DBMS_OUTPUT.put_line ('Ya existe un usuario de cÃ©dula ' || p_cedula);
+                    DBMS_OUTPUT.put_line ('Ya existe un usuario de cédula ' || p_cedula);
                 ELSE
                     DBMS_OUTPUT.put_line (SQLERRM);
                 END IF;
+            END;
     END agregar_usuario;
     
     PROCEDURE eliminar_usuario(p_cedula Usuario.cedula%TYPE) AS
