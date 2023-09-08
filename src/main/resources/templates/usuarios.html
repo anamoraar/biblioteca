@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Biblioteca</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap.min.js"></script>
+    <!--<script src="/app.js"></script>-->
+</head>
+<body>
+<br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+    <a class="navbar-brand mb-0 h1">Biblioteca</a>
+    <form class="form-inline mx-auto">
+        <input class="form-control mr-sm-2" type="search" placeholder="Buscar usuarios" aria-label="Search" id="searchBar2">
+    </form>
+    <a href="/" class="btn btn-outline-light my-2 my-sm-0 mr-2">Crear usuario</a>
+    <a href="/" class="btn btn-outline-light my-2 my-sm-0 mr-2">Volver</a>
+</nav>
+<br><br>
+
+<table id="tablaUsers" class="table table-bordered text-center">
+    <thead class="thead-dark">
+    <tr>
+        <th>Cédula</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <!-- Expresión de Thymeleaf para pasar por cada uno de los usuarios -->
+    <tr th:each = "usuario, hh : ${usuarios}">
+        <td th:text="${usuario.getCedula()}"></td>
+        <td th:text="${usuario.getNombreCompleto()}"></td>
+        <td th:text="${usuario.getEmail()}"></td>
+        <td>
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-danger my-2 my-sm-0 deleteUser" th:data-id="${usuario.getCedula()}">Delete</button>
+                <a th:href="@{/usuarios/edit(id=${usuario.getId()})}" class="btn btn-outline-info my-2 my-sm-0 mr-2">Edit</a>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#tablaUsers').DataTable( {
+            "oLanguage": {
+                "sLengthMenu": "Mostrar _MENU_ usuarios por página",
+                "sInfo": "Páginas: "
+            },
+            "lengthMenu": [ [5, 10, 15], [5, 10, 15] ],
+            "pagingType": "numbers",
+            "dom": 'lrtip'
+        } );
+        $('#searchBar2').keyup(function(){
+            $('#tablaUsers').DataTable().search($(this).val()).draw();
+        })
+    } );
+</script>
+</body>
+</html>
