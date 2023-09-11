@@ -15,7 +15,7 @@ public class Usuario {
     @Column(name = "apellido", nullable = false)
     private String apellido;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "contrasenya", nullable = false)
@@ -27,10 +27,6 @@ public class Usuario {
 
     public String getNombreCompleto() {
         return nombre+" "+apellido;
-    }
-
-    public String getApellido() {
-        return apellido;
     }
 
     public String getEmail() {

@@ -17,10 +17,17 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
     List<Usuario> findAll();
 
     @Query("SELECT u FROM Usuario u WHERE u.cedula= ?1")
-    Optional<Usuario> findImageById(Long cedula);
+    Optional<Usuario> findUsuarioById(Long cedula);
 
     @Procedure(value = "amora.usuario_paq.agregar_usuario")
     void agregarUsuario(@Param("p_cedula") Long cedula,
+                        @Param("p_nombre") String nombre,
+                        @Param("p_apellido") String apellido,
+                        @Param("p_email") String email,
+                        @Param("p_contrasenya") String contrasenya);
+
+    @Procedure(value = "amora.usuario_paq.actualizar_usuario")
+    void actualizarUsuario(@Param("p_cedula") Long cedula,
                         @Param("p_nombre") String nombre,
                         @Param("p_apellido") String apellido,
                         @Param("p_email") String email,
