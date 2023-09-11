@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Biblioteca</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+<br><br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+    <a class="navbar-brand mb-0 h1">Biblioteca</a>
+    <a href="/usuarios" class="btn btn-outline-light my-2 my-sm-0">Volver</a>
+</nav>
+<div class="contact py-sm-5 py-4">
+    <div class="container py-xl-4 py-lg-2">
+        <form id="form1">
+            <div class="contact-grids1 w3agile-6">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Cédula</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: 107900612" id="cedula" name="cedula" required="required">
+                        <p id="error_cedula"></p>
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Nombre</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: María" name="nombre" id="nombre" required="required">
+                        <p id="error_nombre"></p>
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Apellido</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: Rojas" id="apellido" name="apellido" required="required">
+                        <p id="error_apellido"></p>
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Email</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: mrojas@gmail.com" name="email" id="email">
+                        <p id="error_email"></p>
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Contraseña</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: cont2254" name="cont" id="cont">
+                        <p id="error_cont"></p>
+                    </div>
+                </div>
+                <div class="mx-auto col-md-6">
+                    <input type="button" id="crearUser" class="btn btn-outline-dark my-2 my-sm-0 form-control" value="Crear">
+                    <br><br>
+                </div>
+            </div>
+            <br>
+            <div id="success1" class="text-center" style="color:green;"></div>
+            <div id="error1" class="text-center" style="color:red;"></div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

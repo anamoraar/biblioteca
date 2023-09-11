@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Biblioteca</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+<br><br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+    <a class="navbar-brand mb-0 h1">Biblioteca</a>
+    <a href="/usuarios" class="btn btn-outline-light my-2 my-sm-0">Volver</a>
+</nav>
+<div class="contact py-sm-5 py-4">
+    <div class="container py-xl-4 py-lg-2">
+        <form id="form2">
+            <div class="contact-grids1 w3agile-6">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Nombre</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: María" name="nombre2" id="nombre2">
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Apellido</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: Rojas" id="apellido2" name="apellido2">
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Email</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: mrojas@gmail.com" name="email2" id="email2">
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Contraseña</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: cont2254" name="cont2" id="cont2">
+                    </div>
+                </div>
+                <div class="mx-auto col-md-6">
+                    <button type="submit" id="editUser" class="btn btn-outline-info my-2 my-sm-0 form-control" th:data-id="${cedula}">Actualizar</button>
+                    <br><br>
+                </div>
+            </div>
+            <br>
+            <div id="success2" class="text-center" style="color:green;"></div>
+            <div id="error2" class="text-center" style="color:red;"></div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
