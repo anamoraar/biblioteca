@@ -1,6 +1,6 @@
---Proyecto 1: Casey Baeza, Adrián Molina, Ana Laura Mora
+--Proyecto 1: Casey Baeza, Adrian Molina, Ana Laura Mora
 
---Creación de tablas
+--Creacion de tablas
 CREATE TABLE nacionalidad(
     nacionalidad_id NUMBER(3) NOT NULL,
     nombre VARCHAR2 (30) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE genero(
 CREATE TABLE libro(
     libro_id NUMBER (5) NOT NULL,
     titulo VARCHAR2 (50) NOT NULL,
-    anyo_publicacion NUMBER (4), --usamos number(4) o date?
+    anyo_publicacion NUMBER (4),
     descripcion VARCHAR2 (350),
     disponibilidad NUMBER (5),
     autor_id NUMBER (3) NOT NULL,
@@ -117,7 +117,15 @@ CREATE OR REPLACE PACKAGE usuario_paq AS
         p_nombre usuario.nombre%TYPE,
         p_apellido usuario.apellido%TYPE,
         p_email usuario.email%TYPE,
-        p_contrasenya usuario.contrasenya%TYPE);
+        p_contrasenya usuario.contrasenya%TYPE
+    );
+    PROCEDURE actualizar_usuario(
+        p_cedula usuario.cedula%TYPE,
+        p_nombre usuario.nombre%TYPE,
+        p_apellido usuario.apellido%TYPE,
+        p_email usuario.email%TYPE,
+        p_contrasenya usuario.contrasenya%TYPE
+    );
     PROCEDURE eliminar_usuario(p_cedula usuario.cedula%TYPE);
     FUNCTION cant_prestamos(p_cedula usuario.cedula%TYPE) RETURN NUMBER;
 END usuario_paq;
@@ -130,73 +138,46 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
             p_apellido usuario.apellido%TYPE,
             p_email usuario.email%TYPE,
             p_contrasenya usuario.contrasenya%TYPE) AS
-        BEGIN
-        DECLARE
-            v_hash_contrasenya RAW(16); -- MD5 produce un hash RAW de 16 bytes
-            v_hex_contrasenya VARCHAR2(32); -- MD5 produce una cadena hexadecimal de 32 caracteres
-        BEGIN
-            -- Calcular el hash MD5 de la contrase�a
-            v_hash_contrasenya := DBMS_OBFUSCATION_TOOLKIT.MD5(input_string => p_contrasenya);
-            
-            -- Convertir el hash RAW a una cadena hexadecimal
-            v_hex_contrasenya := UTL_RAW.CAST_TO_VARCHAR2(v_hash_contrasenya);
-
-            INSERT INTO usuario VALUES(p_cedula, p_nombre, p_apellido, p_email, v_hex_contrasenya);
-            COMMIT;
-            EXCEPTION WHEN OTHERS THEN
-                IF SQLCODE=-1 THEN
-                    DBMS_OUTPUT.put_line ('Ya existe un usuario de c�dula ' || p_cedula);
-                ELSE
-                    DBMS_OUTPUT.put_line (SQLERRM);
-                END IF;
-            END;
+    BEGIN
+        INSERT INTO usuario VALUES (p_cedula, p_nombre, p_apellido, p_email, p_contrasenya);
+        COMMIT;
+        EXCEPTION WHEN OTHERS THEN 
+            RAISE_APPLICATION_ERROR(-20001, 'Usuario repetido');
     END agregar_usuario;
     
+    PROCEDURE actualizar_usuario(
+        p_cedula usuario.cedula%TYPE,
+        p_nombre usuario.nombre%TYPE,
+        p_apellido usuario.apellido%TYPE,
+        p_email usuario.email%TYPE,
+        p_contrasenya usuario.contrasenya%TYPE) AS
+    BEGIN
+        UPDATE usuario
+        SET nombre = p_nombre,
+            apellido = p_apellido,
+            email = p_email,
+            contrasenya = p_contrasenya
+        WHERE cedula = p_cedula;
+        COMMIT;
+    END actualizar_usuario;
+
     PROCEDURE eliminar_usuario(p_cedula Usuario.cedula%TYPE) AS
-        BEGIN
-            DELETE FROM Usuario WHERE cedula = p_cedula;
-            COMMIT;
-        END eliminar_usuario;
-        
+    BEGIN
+        DELETE FROM Usuario WHERE cedula = p_cedula;
+        COMMIT;
+    END eliminar_usuario;
+
     FUNCTION cant_prestamos(p_cedula Usuario.cedula%TYPE) RETURN NUMBER AS
         prestamos_count NUMBER(3);
-        BEGIN
-            SELECT count(*) INTO prestamos_count
-                FROM prestamo pres
-                WHERE pres.cedula = p_cedula;
-            RETURN prestamos_count;
-        END cant_prestamos;
-
-    PROCEDURE iniciar_sesion(
-            p_email usuario.email%TYPE,
-            p_contrasenya usuario.contrasenya%TYPE) AS
-        v_hash_contrasenya RAW(16);
-        v_hex_contrasenya VARCHAR2(32);
-        BEGIN
-            -- Calcular el hash MD5 de la contrase�a ingresada
-            v_hash_contrasenya := DBMS_OBFUSCATION_TOOLKIT.MD5(input_string => p_contrasenya);
-            v_hex_contrasenya := UTL_RAW.CAST_TO_VARCHAR2(v_hash_contrasenya);
-
-            -- Verificar si el correo y la contrase�a coinciden en la base de datos
-            DECLARE
-                v_email usuario.email%TYPE;
-            BEGIN
-                SELECT email
-                INTO v_email
-                FROM usuario
-                WHERE email = p_email AND contrasenya = v_hex_contrasenya;
-                
-                IF v_email IS NOT NULL THEN
-                    DBMS_OUTPUT.put_line ('Inicio de sesi�n exitoso para ' || p_email);
-                ELSE
-                    DBMS_OUTPUT.put_line ('Credenciales incorrectas');
-                END IF;
-            EXCEPTION WHEN NO_DATA_FOUND THEN
-                DBMS_OUTPUT.put_line ('Credenciales incorrectas');
-            END;
-        END iniciar_sesion;
-
+    BEGIN
+        SELECT count(*) INTO prestamos_count
+        FROM prestamo pres
+        WHERE pres.cedula = p_cedula;
+        RETURN prestamos_count;
+    END cant_prestamos;
+    
 END usuario_paq;
+
 /
 
 CREATE OR REPLACE PACKAGE libro_paq AS
@@ -223,7 +204,7 @@ CREATE OR REPLACE PACKAGE libro_paq AS
     
     -- Procedure para eliminar un libro
     PROCEDURE eliminar_libro(p_libro_id libro.libro_id%TYPE);
-    -- Función para contar cuántos clientes distintos han solicitado el libro a préstamo
+    -- Funcion para contar cuantos clientes distintos han solicitado el libro a prestamo
     FUNCTION cant_clientes_prestamo(p_libro_id libro.libro_id%TYPE) RETURN NUMBER;
 END libro_paq;
 /
@@ -241,12 +222,8 @@ CREATE OR REPLACE PACKAGE BODY libro_paq AS
     BEGIN
         INSERT INTO libro VALUES (libro_seq.NEXTVAL, p_titulo, p_anyo_publicacion, p_descripcion, p_disponibilidad, p_autor_id, p_genero_id, p_editorial_id);
         COMMIT;
-		EXCEPTION WHEN OTHERS THEN
-                IF SQLCODE=-1 THEN
-                    DBMS_OUTPUT.put_line ('Ya existe un libro con el mismo título' || p_titulo);
-                ELSE
-                    DBMS_OUTPUT.put_line (SQLERRM);
-                END IF;
+		EXCEPTION WHEN OTHERS THEN 
+            RAISE_APPLICATION_ERROR(-20002, 'Libro repetido');
     END agregar_libro;
 
     -- Procedure para actualizar un libro
@@ -279,7 +256,7 @@ CREATE OR REPLACE PACKAGE BODY libro_paq AS
         COMMIT;
     END eliminar_libro;
 
-    -- Función para contar cuántos clientes distintos han solicitado el libro a préstamo
+    -- Funcion para contar cuántos clientes distintos han solicitado el libro a préstamo
     FUNCTION cant_clientes_prestamo(p_libro_id libro.libro_id%TYPE) RETURN NUMBER IS
         v_count NUMBER(3);
     BEGIN
