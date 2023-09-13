@@ -9,30 +9,17 @@ $(document).ready(function () {
         var apellido = $("#apellido").val();
         var email = $("#email").val();
         var contrasenya = $("#cont").val();
-        //Se verifica que los campos obligatorios se encuentren llenos para hacer enviar los datos al servidor
+        //Se verifica que los campos obligatorios se encuentren llenos para enviar los datos al servidor
         if (cedula === "" || nombre === "" || apellido === "" || email === "" || contrasenya === "") {
-            $("#crearUser").prop("disabled", false);
-            $("#cedula").css("border-color", "red");
-            $("#nombre").css("border-color", "red");
-            $("#apellido").css("border-color", "red");
-            $("#email").css("border-color", "red");
-            $("#cont").css("border-color", "red");
-            $("#error_cedula").html("Llene el campo indicado.");
-            $("#error_nombre").html("Llene el campo indicado.");
-            $("#error_apellido").html("Llene el campo indicado.");
-            $("#error_email").html("Llene el campo indicado.");
-            $("#error_cont").html("Llene el campo indicado.");
+            $("#error1").css("display", "block");
+            $("#error1").text("Llene todos los campos");
+            $("#error1").delay(3000)
+                .fadeOut("slow", function () {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                });
         } else {
-            $("#cedula").css("border-color", "");
-            $("#nombre").css("border-color", "");
-            $("#apellido").css("border-color", "");
-            $("#email").css("border-color", "");
-            $("#cont").css("border-color", "");
-            $("#error_cedula").css("opacity", 0);
-            $("#error_nombre").css("opacity", 0);
-            $("#error_apellido").css("opacity", 0);
-            $("#error_email").css("opacity", 0);
-            $("#error_cont").css("opacity", 0);
             $.ajax({
                 type: "POST",
                 data: {
@@ -103,7 +90,6 @@ $(document).ready(function () {
             },
         });
     });
-
     //Función para eliminar un usuario
     $(".deleteUser").on("click", function() {
         var cedula = $(this).data("id");
@@ -112,12 +98,124 @@ $(document).ready(function () {
                 url: "/usuarios/eliminar/" + cedula,
                 type: "DELETE",
                 success: function (e) {
-                    $("body").fadeOut(500, function () {
+                    $("body").fadeOut(400, function () {
                         location.reload();
                     });
                 },
                 error: function (xhr, textStatus) {
                     alert("Error al eliminar el usuario");
+                },
+            });
+        }
+    });
+    $("#crearLibro").on("click", function () {
+        $("#crearLibro").prop("disabled", true);
+        var titulo = $("#title").val();
+        var publicacion = $("#year").val();
+        var descripcion = $("#description").val();
+        var disponibilidad = $("#stock").val();
+        var autor_id = $("#autor").val();
+        var genero_id = $("#genero").val();
+        var editorial_id = $("#editorial").val();
+        //Se verifica que los campos obligatorios se encuentren llenos
+        if (titulo === "" || publicacion === "" || descripcion === "" || disponibilidad === ""
+            || autor_id === "" || genero_id === "" || editorial_id === "") {
+            $("#error3").css("display", "block");
+            $("#error3").text("Llene todos los campos");
+            $("#error3").delay(3000)
+                .fadeOut("slow", function () {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                });
+        } else {
+            $.ajax({
+                type: "POST",
+                data: {
+                    titulo: titulo,
+                    publicacion: publicacion,
+                    descripcion: descripcion,
+                    disponibilidad: disponibilidad,
+                    autor_id: autor_id,
+                    genero_id: genero_id,
+                    editorial_id: editorial_id
+                },
+                url: "/libros/agregar",
+                success: function (data) {
+                    $("#form3")[0].reset();
+                    $("#error3").text("");
+                    $("#success3").css("display", "block");
+                    $("#success3").text("Libro creado");
+                    $("#success3").delay(2000).fadeOut("slow");
+                },
+                error: function (e) {
+                    $("#error3").css("display", "block");
+                    $("#error3").text("Error al agregar el libro");
+                    $("#error3").delay(3000)
+                        .fadeOut("slow", function () {
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                        });
+                },
+            });
+        }
+    });
+    $("#editBook").on("click", function () {
+        $("#editBook").prop("disabled", true);
+        var titulo = $("#title2").val();
+        var publicacion = $("#year2").val();
+        var descripcion = $("#description2").val();
+        var disponibilidad = $("#stock2").val();
+        var autor_id = $("#autor2").val();
+        var genero_id = $("#genero2").val();
+        var editorial_id = $("#editorial2").val();
+        var libro_id = $(this).data("id");
+        $.ajax({
+            type: "PUT",
+            url: "/libros/update/" + libro_id,
+            data: {
+                titulo: titulo,
+                publicacion: publicacion,
+                descripcion: descripcion,
+                disponibilidad: disponibilidad,
+                autor_id: autor_id,
+                genero_id: genero_id,
+                editorial_id: editorial_id
+            },
+            success: function (data, statusText, xhr) {
+                $("#form4")[0].reset();
+                $("#error4").text("");
+                $("#success4").css("display", "block");
+                $("#success4").text("Libro actualizado");
+                $("#success4").delay(2000).fadeOut("slow");
+            },
+            error: function (e) {
+                $("#error4").css("display", "block");
+                $("#error4").text("Llene todos los campos");
+                $("#error4")
+                    .delay(3000)
+                    .fadeOut("slow", function () {
+                        setTimeout(function () {
+                            location.reload();
+                        }, 500);
+                    });
+            },
+        });
+    });
+    $(".deleteBook").on("click", function() {
+        var libro_id = $(this).data("id");
+        if (confirm("¿Desea eliminar el libro?")) {
+            $.ajax({
+                url: "/libros/eliminar/" + libro_id,
+                type: "DELETE",
+                success: function (e) {
+                    $("body").fadeOut(400, function () {
+                        location.reload();
+                    });
+                },
+                error: function (xhr, textStatus) {
+                    alert("El libro está asociado a préstamos");
                 },
             });
         }
