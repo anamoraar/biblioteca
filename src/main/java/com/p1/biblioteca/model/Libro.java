@@ -35,6 +35,36 @@ public class Libro {
     @JoinColumn(name = "editorial_id", nullable = false)
     private Editorial editorial;
 
-    // Getters y setters
+    public Long getLibroId() {
+        return libroId;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public Integer getAnyoPublicacion() {
+        return anyoPublicacion;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public Integer getDisponibilidad() {
+        return disponibilidad;
+    }
+
+    public Autor getAutor() {
+        return autor;
+    }
+
+    public Genero getGenero() {
+        return genero;
+    }
+
+    public Editorial getEditorial() {
+        return editorial;
+    }
 }
 

@@ -13,6 +13,12 @@ public class Editorial {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    // Getters y setters
+    public Long getEditorialId() {
+        return editorialId;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
 }
 

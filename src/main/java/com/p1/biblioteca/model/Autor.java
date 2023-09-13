@@ -20,5 +20,11 @@ public class Autor {
     @JoinColumn(name = "nacionalidad_id")
     private Nacionalidad nacionalidad;
 
-    // Getters y setters
+    public Long getAutorId() {
+        return autorId;
+    }
+
+    public String getFullName(){
+        return nombre+" "+apellido;
+    }
 }

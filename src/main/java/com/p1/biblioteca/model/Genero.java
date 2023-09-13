@@ -13,6 +13,12 @@ public class Genero {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    // Getters y setters
+    public Long getGeneroId() {
+        return generoId;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
 }
 
