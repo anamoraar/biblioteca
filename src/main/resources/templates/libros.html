@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Biblioteca</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap.min.js"></script>
+  <script src="/app.js"></script>
+</head>
+<body>
+<br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+  <a class="navbar-brand mb-0 h1">Biblioteca</a>
+  <form class="form-inline mx-auto">
+    <input class="form-control mr-sm-2" type="search" placeholder="Buscar libros" aria-label="Search" id="searchbar2">
+  </form>
+  <a href="/usuarios" class="btn btn-outline-light my-2 my-sm-0 mr-2">Usuarios</a>
+  <a href="/" class="btn btn-outline-light my-2 my-sm-0 mr-2">Préstamos</a>
+  <a href="/libros/crearlibro" class="btn btn-outline-light my-2 my-sm-0 mr-2">Crear libro</a>
+  <a href="/" class="btn btn-outline-light my-2 my-sm-0 mr-2">Salir</a>
+</nav>
+<br><br>
+
+<table id="tablaBooks" class="table table-bordered text-center">
+  <thead class="thead-dark">
+  <tr>
+    <th>ID</th>
+    <th>Título</th>
+    <th>Autor</th>
+    <th>Editorial</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tr th:each = "libro, hh : ${libros}">
+    <td th:text="${libro.getLibroId()}"></td>
+    <td th:text="${libro.getTitulo()}"></td>
+    <td th:text="${libro.getAutor().getFullName()}"></td>
+    <td th:text="${libro.getEditorial().getNombre()}"></td>
+    <td>
+      <div class="btn-group" role="group">
+        <a th:href="@{/libros/detalles(id=${libro.getLibroId()})}" class="btn btn-outline-dark my-2 my-sm-0">Detalles</a>
+        <a th:href="@{/libros/editarlibro(id=${libro.getLibroId()})}" class="btn btn-outline-info my-2 my-sm-0">Editar</a>
+        <button class="btn btn-outline-danger my-2 my-sm-0 deleteBook" th:data-id="${libro.getLibroId()}">Eliminar</button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#tablaBooks').DataTable( {
+      "oLanguage": {
+        "sLengthMenu": "Mostrar _MENU_ libros por página",
+        "sInfo": "Páginas: "
+      },
+      "lengthMenu": [ [5, 10, 15], [5, 10, 15] ],
+      "pagingType": "numbers",
+      "dom": 'lrtip'
+    } );
+    $('#searchbar2').keyup(function(){
+      $('#tablaBooks').DataTable().search($(this).val()).draw();
+    })
+  } );
+</script>
+</body>
+</html>

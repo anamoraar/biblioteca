@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Biblioteca</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+<br><br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+    <a class="navbar-brand mb-0 h1">Biblioteca</a>
+    <a href="/libros" class="btn btn-outline-light my-2 my-sm-0">Volver</a>
+</nav>
+<div class="contact py-sm-5 py-4">
+    <div class="container py-xl-4 py-lg-2">
+        <form id="form3">
+            <div class="contact-grids1 w3agile-6">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Título</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: La Isla Misteriosa" id="title" name="title" required="required">
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Año de publicación</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: 1875" name="year" id="year" required="required">
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label for="autor">Autor:</label>
+                        <select class="form-control" id="autor" required="required">
+                            <option value="">Seleccione un autor</option>
+                            <option th:each="autor : ${autores}" th:value="${autor.getAutorId()}" th:text="${autor.getFullName()}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Disponibles</label>
+                        <input type="text" class="form-control" placeholder="Ejemplo: 21" name="stock" id="stock">
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label for="editorial">Editorial:</label>
+                        <select class="form-control" id="editorial" required="required">
+                            <option value="">Seleccione una editorial</option>
+                            <option th:each="editorial : ${editoriales}" th:value="${editorial.getEditorialId()}" th:text="${editorial.getNombre()}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label for="genero">Género:</label>
+                        <select class="form-control" id="genero" required="required">
+                            <option value="">Seleccione un género</option>
+                            <option th:each="genero : ${generos}" th:value="${genero.getGeneroId()}" th:text="${genero.getNombre()}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-sm-6 contact-form1 form-group">
+                        <label class="col-form-label">Descripción</label>
+                        <input type="text" class="form-control" placeholder="" id="description" name="description" required="required">
+                    </div>
+                </div>
+                <div class="mx-auto col-md-6">
+                    <input type="button" id="crearLibro" class="btn btn-outline-dark my-2 my-sm-0 form-control" value="Crear">
+                    <br><br>
+                </div>
+            </div>
+            <br>
+            <div id="success3" class="text-center" style="color:green;"></div>
+            <div id="error3" class="text-center" style="color:red;"></div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

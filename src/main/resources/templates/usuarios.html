@@ -18,7 +18,7 @@
         <input class="form-control mr-sm-2" type="search" placeholder="Buscar usuarios" aria-label="Search" id="searchBar2">
     </form>
     <a href="/usuarios/crearusuario" class="btn btn-outline-light my-2 my-sm-0 mr-2">Crear usuario</a>
-    <a href="/" class="btn btn-outline-light my-2 my-sm-0 mr-2">Volver</a>
+    <a href="/libros" class="btn btn-outline-light my-2 my-sm-0 mr-2">Volver</a>
 </nav>
 <br><br>
 
@@ -38,8 +38,8 @@
         <td th:text="${usuario.getEmail()}"></td>
         <td>
             <div class="btn-group" role="group">
-                <button class="btn btn-outline-danger my-2 my-sm-0 deleteUser" th:data-id="${usuario.getCedula()}">Eliminar</button>
                 <a th:href="@{/usuarios/editarusuario(cedula=${usuario.getCedula()})}" class="btn btn-outline-info my-2 my-sm-0 mr-2">Editar</a>
+                <button class="btn btn-outline-danger my-2 my-sm-0 deleteUser" th:data-id="${usuario.getCedula()}">Eliminar</button>
              </div>
          </td>
      </tr>

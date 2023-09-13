@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Biblioteca</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+  <a class="navbar-brand mb-0 h1">Biblioteca</a>
+  <a href="/libros" class="btn btn-outline-light my-2 my-sm-0">Volver</a>
+</nav>
+<div class="container py-xl-4 py-lg-2">
+  <h3 class="text-center mb-lg-5 mb-sm-4 mb-3 mt-4">Detalles</h3>
+  <div class="row">
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Título:</h5>
+          <p class="card-text" th:text="${titulo}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Autor:</h5>
+          <p class="card-text" th:text="${autor}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Año de publicación:</h5>
+          <p class="card-text" th:text="${anyo}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Descripción:</h5>
+          <p class="card-text" th:text="${descripcion}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Disponibles:</h5>
+          <p class="card-text" th:text="${disponibilidad}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Género:</h5>
+          <p class="card-text" th:text="${genero}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Editorial:</h5>
+          <p class="card-text" th:text="${editorial}"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
