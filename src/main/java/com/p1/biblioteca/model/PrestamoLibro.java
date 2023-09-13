@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "prestamo_libro")
+@IdClass(PrestamoLibroPK.class)
 public class PrestamoLibro {
     @Id
     @ManyToOne
@@ -15,6 +16,12 @@ public class PrestamoLibro {
     @JoinColumn(name = "libro_id", nullable = false)
     private Libro libro;
 
-    // Getters and setters
+    public Prestamo getPrestamo() {
+        return prestamo;
+    }
+
+    public Libro getLibro() {
+        return libro;
+    }
 }
 
