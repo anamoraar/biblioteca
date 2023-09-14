@@ -128,6 +128,7 @@ CREATE OR REPLACE PACKAGE usuario_paq AS
     );
     PROCEDURE eliminar_usuario(p_cedula usuario.cedula%TYPE);
     FUNCTION cant_prestamos(p_cedula usuario.cedula%TYPE) RETURN NUMBER;
+    PROCEDURE iniciar_sesion(p_email usuario.email%TYPE, p_contrasenya usuario.contrasenya%TYPE);
 END usuario_paq;
 /
 
@@ -175,10 +176,32 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
         WHERE pres.cedula = p_cedula;
         RETURN prestamos_count;
     END cant_prestamos;
+
+    PROCEDURE iniciar_sesion(
+        p_email usuario.email%TYPE,
+        p_contrasenya usuario.contrasenya%TYPE
+        ) AS
+    v_email VARCHAR2(45);
+    
+    BEGIN 
+    SELECT email
+        INTO v_email
+        FROM usuario
+        WHERE email = p_email AND contrasenya = p_contrasenya;
+        
+        IF v_email IS NOT NULL THEN
+            DBMS_OUTPUT.put_line ('Inicio de sesión exitoso para ' || p_email);
+        ELSE
+            DBMS_OUTPUT.put_line ('Credenciales incorrectas');
+        END IF;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.put_line ('Credenciales incorrectas');
+    END iniciar_sesion;
     
 END usuario_paq;
 
 /
+
 
 CREATE OR REPLACE PACKAGE libro_paq AS
     -- Procedure para crear un libro
