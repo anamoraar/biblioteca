@@ -293,6 +293,98 @@ CREATE OR REPLACE PACKAGE BODY libro_paq AS
 END libro_paq;
 /
 
+-- Paquete Prestamo
+CREATE OR REPLACE PACKAGE prestamo_paq AS
+    
+  -- Procedure para crear un préstamo
+  PROCEDURE agregar_prestamo(
+    p_prestamo_id IN prestamo.prestamo_id%TYPE,
+    p_fecha_inicio IN prestamo.fecha_inicio%TYPE,
+    p_fecha_fin IN prestamo.fecha_fin%TYPE,
+    p_cedula IN prestamo.cedula%TYPE
+  );
+
+  -- Procedure para agregar un libro a un préstamo
+  PROCEDURE agregar_libro_a_prestamo(
+    p_prestamo_id IN prestamo.prestamo_id%TYPE,
+    p_libro_id IN prestamo_libro.libro_id%TYPE
+  );
+
+  -- -- Procedure para eliminar un préstamo
+  PROCEDURE eliminar_prestamo(p_prestamo_id IN prestamo.prestamo_id%TYPE);
+END prestamo_paq;
+/
+
+CREATE OR REPLACE PACKAGE BODY prestamo_paq AS
+  -- Procedure para crear un préstamo
+  PROCEDURE agregar_prestamo(
+    p_prestamo_id IN prestamo.prestamo_id%TYPE,
+    p_fecha_inicio IN prestamo.fecha_inicio%TYPE,
+    p_fecha_fin IN prestamo.fecha_fin%TYPE,
+    p_cedula IN prestamo.cedula%TYPE
+  ) IS
+  BEGIN
+    INSERT INTO prestamo (prestamo_id, fecha_inicio, fecha_fin, cedula)
+    VALUES (p_prestamo_id, SYSDATE, p_fecha_fin, p_cedula);
+    COMMIT;
+  END agregar_prestamo;
+
+  -- Procedure para agregar un libro a un préstamo con verificación de disponibilidad
+  PROCEDURE agregar_libro_a_prestamo(
+    p_prestamo_id IN prestamo.prestamo_id%TYPE,
+    p_libro_id IN prestamo_libro.libro_id%TYPE
+  ) IS
+    v_disponibilidad NUMBER;
+  BEGIN
+    -- Obtener la disponibilidad actual del libro
+    SELECT disponibilidad INTO v_disponibilidad
+    FROM libro
+    WHERE libro_id = p_libro_id;
+
+    -- Verificar si hay libros disponibles
+    IF v_disponibilidad > 0 THEN
+      -- Restar uno a la disponibilidad del libro
+      UPDATE libro
+      SET disponibilidad = disponibilidad - 1
+      WHERE libro_id = p_libro_id;
+
+      -- Agregar el libro al préstamo
+      INSERT INTO prestamo_libro (prestamo_id, libro_id)
+      VALUES (p_prestamo_id, p_libro_id);
+
+      COMMIT;
+    ELSE
+      -- No hay libros disponibles
+      RAISE_APPLICATION_ERROR(-20003, 'No hay libros disponibles' || p_libro_id);
+    END IF;
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+      RAISE_APPLICATION_ERROR(-20004, 'No se encontró el libro' || p_libro_id);
+  END agregar_libro_a_prestamo;
+
+  -- Procedure para eliminar un préstamo
+PROCEDURE eliminar_prestamo(p_prestamo_id IN prestamo.prestamo_id%TYPE) IS
+  BEGIN
+    -- Obtener la lista de libros del préstamo
+    FOR libro_rec IN (SELECT libro_id
+                      FROM prestamo_libro
+                      WHERE prestamo_id = p_prestamo_id) LOOP
+      -- Aumentar la disponibilidad del libro en 1
+      UPDATE libro
+      SET disponibilidad = disponibilidad + 1
+      WHERE libro_id = libro_rec.libro_id;
+    END LOOP;
+
+    -- Eliminar los registros del préstamo
+    DELETE FROM prestamo_libro WHERE prestamo_id = p_prestamo_id;
+    DELETE FROM prestamo WHERE prestamo_id = p_prestamo_id;
+
+    COMMIT;
+  END eliminar_prestamo;
+
+END prestamo_paq;
+/
+
 /*
 --Pruebas Paquete usuario
 SET SERVEROUTPUT ON;
@@ -317,6 +409,23 @@ DELETE FROM autor WHERE autor_id = 1;
 DELETE FROM editorial WHERE editorial_id = 1;
 DELETE FROM genero WHERE genero_id = 1;
 DELETE FROM nacionalidad WHERE nacionalidad_id = 1;
+
+
+--Pruebas paquete Prestamo
+BEGIN
+  prestamo_paq.agregar_prestamo(1, TO_DATE('2023-09-13', 'YYYY-MM-DD'), TO_DATE('2023-09-20', 'YYYY-MM-DD'), 123456789);
+END;
+select * from prestamo;
+select * from libro;
+
+BEGIN
+  prestamo_paq.agregar_libro_a_prestamo(1, 1);
+END;
+
+select *from prestamo_libro;
+BEGIN
+  prestamo_paq.eliminar_prestamo(1);
+END;
 */
 
 CREATE TABLE bitacora_libro (
