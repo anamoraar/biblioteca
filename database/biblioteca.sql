@@ -111,6 +111,7 @@ CREATE SEQUENCE prestamo_seq
 --Paquetes
 
 --Paquete relacionado a Usuario
+/
 CREATE OR REPLACE PACKAGE usuario_paq AS
     PROCEDURE agregar_usuario(
         p_cedula usuario.cedula%TYPE,
@@ -188,14 +189,11 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
         INTO v_email
         FROM usuario
         WHERE email = p_email AND contrasenya = p_contrasenya;
-        
         IF v_email IS NOT NULL THEN
             DBMS_OUTPUT.put_line ('Inicio de sesión exitoso para ' || p_email);
-        ELSE
-            DBMS_OUTPUT.put_line ('Credenciales incorrectas');
         END IF;
-    EXCEPTION WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.put_line ('Credenciales incorrectas');
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20005, 'Credenciales incorrectas');
     END iniciar_sesion;
     
 END usuario_paq;
