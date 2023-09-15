@@ -36,6 +36,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
     @Procedure(value = "amora.usuario_paq.eliminar_usuario")
     void eliminarUsuario(@Param("p_cedula") Long cedula);
 
+    @Procedure(value = "amora.usuario_paq.iniciar_sesion")
+    void iniciarSesion(@Param("p_email") String email, @Param("p_contrasenya")  String password);
+
     @Procedure(value = "amora.usuario_paq.cant_prestamos")
     int cantPrestamos(@Param("p_cedula") Long cedula);
 

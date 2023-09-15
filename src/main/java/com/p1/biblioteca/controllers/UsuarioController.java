@@ -17,6 +17,13 @@ public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @GetMapping("/")
+    public ModelAndView showLoginForm(){
+        ModelAndView modelView = new ModelAndView();
+        modelView.setViewName("login.html");
+        return modelView;
+    }
+
     @GetMapping("/usuarios")
     public ModelAndView showAllUsers() {
         ModelAndView modelView = new ModelAndView();
@@ -41,6 +48,16 @@ public class UsuarioController {
             modelView.addObject("cedula", cedula);
         modelView.setViewName("editUsuario.html");
         return modelView;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestParam  String email, @RequestParam String password) {
+        try{
+            usuarioRepository.iniciarSesion(email, password);
+            return ResponseEntity.ok("Login exitoso");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Credenciales incorrectas");
+        }
     }
 
     @PostMapping("/usuarios/agregar")

@@ -1,4 +1,47 @@
 $(document).ready(function () {
+    //Función para hacer el login
+    $("#login").on("click", function () {
+        //Se deshabilita el botón mientras se van a revisar los datos
+        $("#login").prop("disabled", true);
+        //Se obtienen los datos del form
+        var email = $("#loginemail").val();
+        var password = $("#loginpassword").val();
+        //Se verifica que los campos obligatorios se encuentren llenos para enviar los datos al servidor
+        if (email === "" || password === "") {
+            $("#error_login").css("display", "block");
+            $("#error_login").text("Llene todos los campos");
+            $("#error_login").delay(3000)
+                .fadeOut("slow", function () {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                });
+        } else {
+            $.ajax({
+                type: "POST",
+                data: {
+                    email: email,
+                    password: password,
+                },
+                url: "/login",
+                success: function (data) {
+                    $("#loginForm")[0].reset();
+                    $("#error_login").text("");
+                    window.location.href = '/libros';
+                },
+                error: function (e) {
+                    $("#error_login").css("display", "block");
+                    $("#error_login").text("Credenciales incorrectas");
+                    $("#error_login").delay(3000)
+                        .fadeOut("slow", function () {
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                        });
+                },
+            });
+        }
+    });
     //Función para crear un usuario
     $("#crearUser").on("click", function () {
         //Se deshabilita el botón mientras se van a revisar los datos
