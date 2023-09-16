@@ -263,4 +263,106 @@ $(document).ready(function () {
             });
         }
     });
+    $("#crearPrestamo").on("click", function () {
+        $("#crearPrestamo").prop("disabled", true);
+        var fechaFin = $("#fin").val();
+        var cedulaUsuario = $("#usuario").val();
+        if (fechaFin === "" || cedulaUsuario === "") {
+            $("#error5").css("display", "block");
+            $("#error5").text("Llene todos los campos");
+            $("#error5").delay(3000)
+                .fadeOut("slow", function () {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                });
+        } else {
+            $.ajax({
+                type: "POST",
+                data: {
+                    finString: fechaFin,
+                    cedula: cedulaUsuario,
+                },
+                url: "/prestamos/crear",
+                success: function (data) {
+                    $("#form5")[0].reset();
+                    $("#error5").text("");
+                    $("#success5").css("display", "block");
+                    $("#success5").text("Préstamo creado");
+                    $("#success5").delay(2000).fadeOut("slow");
+                },
+                error: function (e) {
+                    $("#error5").css("display", "block");
+                    $("#error5").text("Formato de fecha inválido");
+                    $("#error5").delay(3000)
+                        .fadeOut("slow", function () {
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                        });
+                },
+            });
+        }
+    });
+    $(".deletePres").on("click", function() {
+        var prestamo_id = $(this).data("id");
+        if (confirm("¿Desea eliminar el préstamo?")) {
+            $.ajax({
+                url: "/prestamos/eliminar/" + prestamo_id,
+                type: "DELETE",
+                success: function (e) {
+                    $("body").fadeOut(400, function () {
+                        location.reload();
+                    });
+                },
+                error: function (xhr, textStatus) {
+                    alert("El préstamo no puede ser eliminado");
+                },
+            });
+        }
+    });
+    $("#addBook").on("click", function () {
+        $("#addBook").prop("disabled", true);
+        var prestamoId = $("#prestamoId").val();
+        var libros = [];
+        $("input[name='libros']:checked").each(function() {
+            libros.push($(this).val());
+        });
+        if (libros.length === 0) {
+            $("#error6").css("display", "block");
+            $("#error6").text("Seleccione algún libro");
+            $("#error6").delay(3000)
+                .fadeOut("slow", function () {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                });
+        } else {
+            $.ajax({
+                type: "POST",
+                data: {
+                    prestamo_id: prestamoId,
+                    libros_IDs: libros.join(',')
+                },
+                url: "/prestamos/agregarlibros",
+                success: function (data) {
+                    $("#form6")[0].reset();
+                    $("#error6").text("");
+                    $("#success6").css("display", "block");
+                    $("#success6").text("Libro/s agregado/s");
+                    $("#success6").delay(2000).fadeOut("slow");
+                },
+                error: function (e) {
+                    $("#error6").css("display", "block");
+                    $("#error6").text("Falta de disponibilidad en algunos libros");
+                    $("#error6").delay(3000)
+                        .fadeOut("slow", function () {
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                        });
+                },
+            });
+        }
+    });
 });
