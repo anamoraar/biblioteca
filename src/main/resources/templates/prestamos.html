@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Biblioteca</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+<br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+    <a class="navbar-brand mb-0 h1">Biblioteca</a>
+    <form class="form-inline mx-auto">
+        <input class="form-control mr-sm-2" type="search" placeholder="Buscar préstamos" aria-label="Search" id="searchbar3">
+    </form>
+    <a href="/prestamos/crearprestamo" class="btn btn-outline-light my-2 my-sm-0 mr-2">Crear préstamo</a>
+    <a href="/libros" class="btn btn-outline-light my-2 my-sm-0 mr-2">Volver</a>
+</nav>
+<br><br>
+<table id="tablaPrests" class="table table-bordered text-center">
+    <thead class="thead-dark">
+    <tr>
+        <th>ID</th>
+        <th>Cédula usuario</th>
+        <th>Fecha inicio</th>
+        <th>Fecha fin</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tr th:each = "prestamo, hh : ${prestamos}">
+        <td th:text="${prestamo.getPrestamoId()}"></td>
+        <td th:text="${prestamo.getUsuario().getCedula()}"></td>
+        <td th:text="${prestamo.getFechaInicio().toString()}"></td>
+        <td th:text="${prestamo.getFechaFin().toString()}"></td>
+        <td>
+            <div class="btn-group" role="group">
+                <a th:href="@{/prestamos/librosform(id=${prestamo.getPrestamoId()})}" class="btn btn-outline-info my-2 my-sm-0" >Agregar libros</a>
+                <a th:href="@{/prestamos/detalles(id=${prestamo.getPrestamoId()})}" class="btn btn-outline-dark my-2 my-sm-0">Detalles</a>
+                <button class="btn btn-outline-danger my-2 my-sm-0 deletePres" th:data-id="${prestamo.getPrestamoId()}">Eliminar</button>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#tablaPrests').DataTable( {
+            "oLanguage": {
+                "sLengthMenu": "Mostrar _MENU_ préstamos por página",
+                "sInfo": "Páginas: "
+            },
+            "lengthMenu": [ [5, 10, 15], [5, 10, 15] ],
+            "pagingType": "numbers",
+            "dom": 'lrtip'
+        } );
+        $('#searchbar3').keyup(function(){
+            $('#tablaPrests').DataTable().search($(this).val()).draw();
+        })
+    } );
+</script>
+</body>
+</html>

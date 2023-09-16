@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Biblioteca</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+  <a class="navbar-brand mb-0 h1">Biblioteca</a>
+  <a href="/prestamos" class="btn btn-outline-light my-2 my-sm-0">Volver</a>
+</nav>
+<div class="container py-xl-4 py-lg-2">
+  <h3 class="text-center mb-lg-5 mb-sm-4 mb-3 mt-4">Detalles del préstamo</h3>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">ID:</h5>
+          <p class="card-text" th:text="${id}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Cédula del usuario:</h5>
+          <p class="card-text" th:text="${cedula}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Fecha de inicio:</h5>
+          <p class="card-text" th:text="${inicio}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Fecha de fin:</h5>
+          <p class="card-text" th:text="${fin}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Libros:</h5>
+          <ul>
+            <li th:each="libro : ${libros}" th:text="${libro.displayInfo()}"></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

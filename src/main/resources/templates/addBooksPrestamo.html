@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Biblioteca</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="/app.js"></script>
+</head>
+<body>
+<br><br>
+<nav class="navbar navbar-dark bg-dark justify-content-between fixed-top">
+  <a class="navbar-brand mb-0 h1">Biblioteca</a>
+  <a href="/prestamos" class="btn btn-outline-light my-2 my-sm-0">Volver</a>
+</nav>
+<div class="contact py-sm-5 py-4">
+  <div class="container py-xl-4 py-lg-2">
+    <form id="form6">
+      <input type="hidden" id="prestamoId" th:value="${prestamo_id}">
+      <div class="contact-grids1 w3agile-6">
+        <div class="row">
+          <div class="col-md-6 col-sm-6 contact-form1 form-group">
+            <label for="book">Seleccione los libros:</label>
+            <div th:each="libro : ${libros}">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="book" th:value="${libro.getLibroId()}" th:id="${libro.getLibroId()}" name="libros">
+                <label class="form-check-label" th:for="${libro.getLibroId()}" th:text="${libro.displayInfo()}"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mx-auto col-md-6">
+          <input type="button" id="addBook" class="btn btn-outline-dark my-2 my-sm-0 form-control" value="Agregar">
+          <br><br>
+        </div>
+      </div>
+      <br>
+      <div id="success6" class="text-center" style="color:green;"></div>
+      <div id="error6" class="text-center" style="color:red;"></div>
+    </form>
+  </div>
+</div>
+</body>
+</html>
