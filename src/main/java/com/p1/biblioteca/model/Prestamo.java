@@ -1,6 +1,6 @@
 package com.p1.biblioteca.model;
 import jakarta.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Table(name = "prestamo")
@@ -23,6 +23,20 @@ public class Prestamo {
     @JoinColumn(name = "cedula", nullable = false)
     private Usuario usuario;
 
-    // Getters y setters
+    public Long getPrestamoId() {
+        return prestamoId;
+    }
+
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
 }
 

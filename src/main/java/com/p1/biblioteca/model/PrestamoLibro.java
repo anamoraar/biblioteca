@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 @IdClass(PrestamoLibroPK.class)
 public class PrestamoLibro {
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "prestamo_id", nullable = false)
     private Prestamo prestamo;
 
