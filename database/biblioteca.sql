@@ -296,7 +296,6 @@ CREATE OR REPLACE PACKAGE prestamo_paq AS
     
   -- Procedure para crear un préstamo
   PROCEDURE agregar_prestamo(
-    p_prestamo_id IN prestamo.prestamo_id%TYPE,
     p_fecha_inicio IN prestamo.fecha_inicio%TYPE,
     p_fecha_fin IN prestamo.fecha_fin%TYPE,
     p_cedula IN prestamo.cedula%TYPE
@@ -316,14 +315,13 @@ END prestamo_paq;
 CREATE OR REPLACE PACKAGE BODY prestamo_paq AS
   -- Procedure para crear un préstamo
   PROCEDURE agregar_prestamo(
-    p_prestamo_id IN prestamo.prestamo_id%TYPE,
     p_fecha_inicio IN prestamo.fecha_inicio%TYPE,
     p_fecha_fin IN prestamo.fecha_fin%TYPE,
     p_cedula IN prestamo.cedula%TYPE
   ) IS
   BEGIN
     INSERT INTO prestamo (prestamo_id, fecha_inicio, fecha_fin, cedula)
-    VALUES (p_prestamo_id, SYSDATE, p_fecha_fin, p_cedula);
+    VALUES (prestamo_seq.NEXTVAL, SYSDATE, p_fecha_fin, p_cedula);
     COMMIT;
   END agregar_prestamo;
 
@@ -426,6 +424,7 @@ BEGIN
 END;
 */
 
+--Bitácora para los libros
 CREATE TABLE bitacora_libro (
     cambio_id NUMBER (5),
     libro_id NUMBER (5),
@@ -459,15 +458,19 @@ BEGIN
     VALUES (cambio_bitacora_seq.NEXTVAL, :NEW.libro_id, SYSTIMESTAMP, USER, v_accion);
 END;
 /
-
-
-
-
-
-
 /*    
 -- Eliminar trigger
 DROP TRIGGER tiud_bitacora_libro;
+
+--Eliminar paquetes
+DROP PACKAGE BODY usuario_paq;
+DROP PACKAGE BODY libro_paq;
+DROP PACKAGE BODY prestamo_paq;
+
+DROP PACKAGE usuario_paq;
+DROP PACKAGE libro_paq;
+DROP PACKAGE prestamo_paq;
+
 -- Eliminar secuencias 
 DROP SEQUENCE cambio_bitacora_seq;
 DROP SEQUENCE nacionalidad_seq;
