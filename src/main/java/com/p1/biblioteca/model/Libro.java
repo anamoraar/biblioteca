@@ -66,5 +66,9 @@ public class Libro {
     public Editorial getEditorial() {
         return editorial;
     }
+
+    public String displayInfo(){
+        return titulo+" - "+getAutor().getFullName();
+    }
 }
 
