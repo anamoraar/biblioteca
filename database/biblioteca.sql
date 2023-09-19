@@ -69,6 +69,7 @@ CREATE TABLE prestamo_libro(
     CONSTRAINT prestamo_libro_prestamo_fk FOREIGN KEY (prestamo_id) REFERENCES prestamo(prestamo_id),
     CONSTRAINT prestamo_libro_libro_fk FOREIGN KEY (libro_id) REFERENCES libro(libro_id)
 );
+/
     
 --Creación de secuencias
 CREATE SEQUENCE nacionalidad_seq
@@ -107,11 +108,10 @@ CREATE SEQUENCE prestamo_seq
     INCREMENT BY 1
     NOCACHE
  	NOCYCLE;
-    
+/    
 --Paquetes
 
 --Paquete relacionado a Usuario
-/
 CREATE OR REPLACE PACKAGE usuario_paq AS
     PROCEDURE agregar_usuario(
         p_cedula usuario.cedula%TYPE,
@@ -128,12 +128,13 @@ CREATE OR REPLACE PACKAGE usuario_paq AS
         p_contrasenya usuario.contrasenya%TYPE
     );
     PROCEDURE eliminar_usuario(p_cedula usuario.cedula%TYPE);
-    FUNCTION cant_prestamos(p_cedula usuario.cedula%TYPE) RETURN NUMBER;
     PROCEDURE iniciar_sesion(p_email usuario.email%TYPE, p_contrasenya usuario.contrasenya%TYPE);
 END usuario_paq;
 /
 
 CREATE OR REPLACE PACKAGE BODY usuario_paq AS
+
+    -- Procedure para crear un usuario
     PROCEDURE agregar_usuario(
             p_cedula usuario.cedula%TYPE,
             p_nombre usuario.nombre%TYPE,
@@ -147,6 +148,7 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
             RAISE_APPLICATION_ERROR(-20001, 'Usuario repetido');
     END agregar_usuario;
     
+    -- Procedure para actualizar los datos de un usuario
     PROCEDURE actualizar_usuario(
         p_cedula usuario.cedula%TYPE,
         p_nombre usuario.nombre%TYPE,
@@ -162,22 +164,15 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
         WHERE cedula = p_cedula;
         COMMIT;
     END actualizar_usuario;
-
+    
+    -- Procedure para eliminar un usuario
     PROCEDURE eliminar_usuario(p_cedula Usuario.cedula%TYPE) AS
     BEGIN
         DELETE FROM Usuario WHERE cedula = p_cedula;
         COMMIT;
     END eliminar_usuario;
-
-    FUNCTION cant_prestamos(p_cedula Usuario.cedula%TYPE) RETURN NUMBER AS
-        prestamos_count NUMBER(3);
-    BEGIN
-        SELECT count(*) INTO prestamos_count
-        FROM prestamo pres
-        WHERE pres.cedula = p_cedula;
-        RETURN prestamos_count;
-    END cant_prestamos;
-
+    
+    -- Procedure para iniciar sesión dado un email y una contrasenya
     PROCEDURE iniciar_sesion(
         p_email usuario.email%TYPE,
         p_contrasenya usuario.contrasenya%TYPE
@@ -188,7 +183,7 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
     SELECT email
         INTO v_email
         FROM usuario
-        WHERE email = p_email AND contrasenya = p_contrasenya;
+        WHERE p_email = 'admin@example.com' AND contrasenya = p_contrasenya; --se verifica que sea el administrador
         IF v_email IS NOT NULL THEN
             DBMS_OUTPUT.put_line ('Inicio de sesión exitoso para ' || p_email);
         END IF;
@@ -200,7 +195,7 @@ END usuario_paq;
 
 /
 
-
+--Paquete relacionado a Paquete
 CREATE OR REPLACE PACKAGE libro_paq AS
     -- Procedure para crear un libro
     PROCEDURE agregar_libro(
@@ -246,7 +241,6 @@ CREATE OR REPLACE PACKAGE BODY libro_paq AS
 		EXCEPTION WHEN OTHERS THEN 
             RAISE_APPLICATION_ERROR(-20002, 'Libro repetido');
     END agregar_libro;
-
     -- Procedure para actualizar un libro
     PROCEDURE actualizar_libro(
         p_libro_id libro.libro_id%TYPE,
@@ -269,14 +263,12 @@ CREATE OR REPLACE PACKAGE BODY libro_paq AS
         WHERE libro_id = p_libro_id;
         COMMIT;
     END actualizar_libro;
-
     -- Procedure para eliminar un libro
     PROCEDURE eliminar_libro(p_libro_id libro.libro_id%TYPE) AS
     BEGIN
         DELETE FROM libro WHERE libro_id = p_libro_id;
         COMMIT;
     END eliminar_libro;
-
     -- Funcion para contar cuántos clientes distintos han solicitado el libro a préstamo
     FUNCTION cant_clientes_prestamo(p_libro_id libro.libro_id%TYPE) RETURN NUMBER IS
         v_count NUMBER(3);
@@ -291,7 +283,7 @@ CREATE OR REPLACE PACKAGE BODY libro_paq AS
 END libro_paq;
 /
 
--- Paquete Prestamo
+--Paquete relacionado a Prestamo
 CREATE OR REPLACE PACKAGE prestamo_paq AS
     
   -- Procedure para crear un préstamo
@@ -307,122 +299,90 @@ CREATE OR REPLACE PACKAGE prestamo_paq AS
     p_libro_id IN prestamo_libro.libro_id%TYPE
   );
 
-  -- -- Procedure para eliminar un préstamo
+  -- Procedure para eliminar un préstamo
   PROCEDURE eliminar_prestamo(p_prestamo_id IN prestamo.prestamo_id%TYPE);
+  
+  -- Función que retorna la cantidad de libros que tiene un préstamo
+  FUNCTION cant_libros(p_prestamo_id IN prestamo.prestamo_id%TYPE) RETURN NUMBER;
 END prestamo_paq;
 /
 
 CREATE OR REPLACE PACKAGE BODY prestamo_paq AS
-  -- Procedure para crear un préstamo
-  PROCEDURE agregar_prestamo(
-    p_fecha_inicio IN prestamo.fecha_inicio%TYPE,
-    p_fecha_fin IN prestamo.fecha_fin%TYPE,
-    p_cedula IN prestamo.cedula%TYPE
-  ) IS
-  BEGIN
-    INSERT INTO prestamo (prestamo_id, fecha_inicio, fecha_fin, cedula)
-    VALUES (prestamo_seq.NEXTVAL, SYSDATE, p_fecha_fin, p_cedula);
-    COMMIT;
-  END agregar_prestamo;
+    -- Procedure para crear un préstamo
+    PROCEDURE agregar_prestamo(
+        p_fecha_inicio IN prestamo.fecha_inicio%TYPE,
+        p_fecha_fin IN prestamo.fecha_fin%TYPE,
+        p_cedula IN prestamo.cedula%TYPE
+    ) IS
+    BEGIN
+        INSERT INTO prestamo (prestamo_id, fecha_inicio, fecha_fin, cedula)
+        VALUES (prestamo_seq.NEXTVAL, SYSDATE, p_fecha_fin, p_cedula);
+        COMMIT;
+    END agregar_prestamo;
 
-  -- Procedure para agregar un libro a un préstamo con verificación de disponibilidad
-  PROCEDURE agregar_libro_a_prestamo(
-    p_prestamo_id IN prestamo.prestamo_id%TYPE,
-    p_libro_id IN prestamo_libro.libro_id%TYPE
-  ) IS
-    v_disponibilidad NUMBER;
-  BEGIN
-    -- Obtener la disponibilidad actual del libro
-    SELECT disponibilidad INTO v_disponibilidad
-    FROM libro
-    WHERE libro_id = p_libro_id;
-
-    -- Verificar si hay libros disponibles
-    IF v_disponibilidad > 0 THEN
-      -- Restar uno a la disponibilidad del libro
-      UPDATE libro
-      SET disponibilidad = disponibilidad - 1
-      WHERE libro_id = p_libro_id;
-
-      -- Agregar el libro al préstamo
-      INSERT INTO prestamo_libro (prestamo_id, libro_id)
-      VALUES (p_prestamo_id, p_libro_id);
-
-      COMMIT;
-    ELSE
-      -- No hay libros disponibles
-      RAISE_APPLICATION_ERROR(-20003, 'No hay libros disponibles' || p_libro_id);
-    END IF;
-  EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-      RAISE_APPLICATION_ERROR(-20004, 'No se encontró el libro' || p_libro_id);
-  END agregar_libro_a_prestamo;
+    -- Procedure para agregar un libro a un préstamo con verificación de disponibilidad
+    PROCEDURE agregar_libro_a_prestamo(
+        p_prestamo_id IN prestamo.prestamo_id%TYPE,
+        p_libro_id IN prestamo_libro.libro_id%TYPE
+        ) IS
+            v_disponibilidad NUMBER;
+    BEGIN
+        -- Obtener la disponibilidad actual del libro
+        SELECT disponibilidad INTO v_disponibilidad
+        FROM libro
+        WHERE libro_id = p_libro_id;
+        -- Verificar si hay libros disponibles
+        IF v_disponibilidad > 0 THEN
+          -- Restar uno a la disponibilidad del libro
+            UPDATE libro
+            SET disponibilidad = disponibilidad - 1
+            WHERE libro_id = p_libro_id;
+    
+          -- Agregar el libro al préstamo
+            INSERT INTO prestamo_libro (prestamo_id, libro_id)
+            VALUES (p_prestamo_id, p_libro_id);
+            COMMIT;
+        ELSE
+          -- No hay libros disponibles
+            RAISE_APPLICATION_ERROR(-20003, 'No hay libros disponibles' || p_libro_id);
+        END IF;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20004, 'No se encontró el libro' || p_libro_id);
+    END agregar_libro_a_prestamo;
 
   -- Procedure para eliminar un préstamo
-PROCEDURE eliminar_prestamo(p_prestamo_id IN prestamo.prestamo_id%TYPE) IS
-  BEGIN
-    -- Obtener la lista de libros del préstamo
-    FOR libro_rec IN (SELECT libro_id
+    PROCEDURE eliminar_prestamo(p_prestamo_id IN prestamo.prestamo_id%TYPE) IS
+        BEGIN
+        -- Obtener la lista de libros del préstamo
+        FOR libro_rec IN (SELECT libro_id
                       FROM prestamo_libro
                       WHERE prestamo_id = p_prestamo_id) LOOP
-      -- Aumentar la disponibilidad del libro en 1
-      UPDATE libro
-      SET disponibilidad = disponibilidad + 1
-      WHERE libro_id = libro_rec.libro_id;
-    END LOOP;
-
-    -- Eliminar los registros del préstamo
-    DELETE FROM prestamo_libro WHERE prestamo_id = p_prestamo_id;
-    DELETE FROM prestamo WHERE prestamo_id = p_prestamo_id;
-
-    COMMIT;
-  END eliminar_prestamo;
-
+        -- Aumentar la disponibilidad del libro en 1
+              UPDATE libro
+              SET disponibilidad = disponibilidad + 1
+              WHERE libro_id = libro_rec.libro_id;
+        END LOOP;
+        -- Eliminar los registros del préstamo
+        DELETE FROM prestamo_libro WHERE prestamo_id = p_prestamo_id;
+        DELETE FROM prestamo WHERE prestamo_id = p_prestamo_id;
+        COMMIT;
+    END eliminar_prestamo;
+  
+  -- Función que retorna la cantidad de libros que tiene un préstamo
+    FUNCTION cant_libros(p_prestamo_id IN prestamo.prestamo_id%TYPE) RETURN NUMBER 
+        IS
+            v_cant NUMBER;
+        BEGIN
+            SELECT COUNT(*) INTO v_cant
+                FROM prestamo_libro
+                WHERE prestamo_id = p_prestamo_id;
+            RETURN v_cant;
+            EXCEPTION WHEN NO_DATA_FOUND THEN
+                RETURN 0;
+        END cant_libros;
+        
 END prestamo_paq;
 /
-
-/*
---Pruebas Paquete usuario
-SET SERVEROUTPUT ON;
-exec usuario_paq.agregar_usuario(208300885, 'Ana', 'Mora', 'amora@gmail.com', 'freib12');
-select * from usuario;
-select usuario_paq.cant_prestamos(208300885) as prestamos from dual;
-exec usuario_paq.eliminar_usuario(208300885);
-
---Pruebas Paquete libro
-INSERT INTO nacionalidad VALUES (1, 'Nacionalidad 1');
-INSERT INTO autor VALUES (1, 'Autor 1', 'Apellido 1', 1);
-INSERT INTO editorial VALUES (1, 'Editorial 1');
-INSERT INTO genero VALUES (1, 'Género 1');
-
-select * from libro;
-EXEC libro_paq.agregar_libro('Harry Potter', 2023, 'Description 1', 10, 1, 1, 1);
-EXEC libro_paq.actualizar_libro(1, 'Harry Potter 2', 2024, 'Description 2', 15, 1, 1, 1);
-EXEC libro_paq.eliminar_libro(1);
-select libro_paq.cant_clientes_prestamo(2) as prestamos from dual;
-
-DELETE FROM autor WHERE autor_id = 1;
-DELETE FROM editorial WHERE editorial_id = 1;
-DELETE FROM genero WHERE genero_id = 1;
-DELETE FROM nacionalidad WHERE nacionalidad_id = 1;
-
-
---Pruebas paquete Prestamo
-BEGIN
-  prestamo_paq.agregar_prestamo(1, TO_DATE('2023-09-13', 'YYYY-MM-DD'), TO_DATE('2023-09-20', 'YYYY-MM-DD'), 123456789);
-END;
-select * from prestamo;
-select * from libro;
-
-BEGIN
-  prestamo_paq.agregar_libro_a_prestamo(1, 1);
-END;
-
-select *from prestamo_libro;
-BEGIN
-  prestamo_paq.eliminar_prestamo(1);
-END;
-*/
 
 --Bitácora para los libros
 CREATE TABLE bitacora_libro (
@@ -433,13 +393,15 @@ CREATE TABLE bitacora_libro (
     modificacion VARCHAR2(15),
     CONSTRAINT bitacora_libro_pk PRIMARY KEY (cambio_id)
 );
-
-CREATE SEQUENCE cambio_bitacora_seq
+/
+--Secuencia para la bitácora
+CREATE SEQUENCE bitacora_libro_seq
     START WITH 1
     INCREMENT BY 1
     NOCACHE
     NOCYCLE;
-
+/
+--Trigger para registrar los inserts, updates y deletes sobre los libros
 CREATE OR REPLACE TRIGGER tiud_bitacora_libro
 AFTER INSERT OR UPDATE OR DELETE ON libro
 FOR EACH ROW
@@ -448,17 +410,20 @@ DECLARE
 BEGIN
     IF INSERTING THEN
         v_accion := 'INSERT';
+        INSERT INTO bitacora_libro (cambio_id, libro_id, fecha_hora_cambio, usuario, modificacion)
+        VALUES (bitacora_libro_seq.NEXTVAL, :NEW.libro_id, SYSTIMESTAMP, USER, v_accion);
     ELSIF UPDATING THEN
         v_accion := 'UPDATE';
+        INSERT INTO bitacora_libro (cambio_id, libro_id, fecha_hora_cambio, usuario, modificacion)
+        VALUES (bitacora_libro_seq.NEXTVAL, :NEW.libro_id, SYSTIMESTAMP, USER, v_accion);
     ELSIF DELETING THEN
         v_accion := 'DELETE';
+        INSERT INTO bitacora_libro (cambio_id, libro_id, fecha_hora_cambio, usuario, modificacion)
+        VALUES (bitacora_libro_seq.NEXTVAL, :OLD.libro_id, SYSTIMESTAMP, USER, v_accion);
     END IF;
-
-    INSERT INTO bitacora_libro (cambio_id, libro_id, fecha_hora_cambio, usuario, modificacion)
-    VALUES (cambio_bitacora_seq.NEXTVAL, :NEW.libro_id, SYSTIMESTAMP, USER, v_accion);
 END;
-/
-/*    
+
+/   
 -- Eliminar trigger
 DROP TRIGGER tiud_bitacora_libro;
 
@@ -472,7 +437,7 @@ DROP PACKAGE libro_paq;
 DROP PACKAGE prestamo_paq;
 
 -- Eliminar secuencias 
-DROP SEQUENCE cambio_bitacora_seq;
+DROP SEQUENCE bitacora_libro_seq;
 DROP SEQUENCE nacionalidad_seq;
 DROP SEQUENCE autor_seq;
 DROP SEQUENCE editorial_seq;
@@ -490,4 +455,4 @@ DROP TABLE autor;
 DROP TABLE nacionalidad;
 DROP TABLE genero;
 DROP TABLE editorial;
-*/
+/
