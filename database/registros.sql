@@ -66,22 +66,22 @@ INSERT INTO autor (autor_id, nombre, apellido, nacionalidad_id) VALUES (autor_se
 -- Inserción de registros para editorial
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Sudamericana');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Secker and Warburg');
-INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'J. B. Lippincott & Co.');
+INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'J. B. Lippincott and Co.');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Sylvia Beach');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Grasset');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Charles Scribners Sons');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Francisco de Robles');
-INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Harper & Brothers');
+INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Harper and Brothers');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'T. Egerton');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Acantilado');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Taschen');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Salamandra');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Scholastic');
-INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'George Allen & Unwin');
+INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'George Allen and Unwin');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Oveja Negra');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Planeta');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Dar al-Adab');
-INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Harper & Row');
+INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Harper and Row');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'SyA');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'Haymarket Books');
 INSERT INTO editorial (editorial_id, nombre) VALUES (editorial_seq.NEXTVAL, 'RM');
@@ -132,6 +132,8 @@ INSERT INTO genero (genero_id, nombre) VALUES (genero_seq.NEXTVAL, 'Novela de É
 
 
 -- Inserción de registros para usuario
+INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
+VALUES (1, 'Admin', '', 'admin@example.com', 'contadmin22');
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
 VALUES (123456789, 'Luis', 'Castro', 'luis.castro@example.com', 'luis12');
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
@@ -672,27 +674,4 @@ VALUES (90, 17);
 INSERT INTO prestamo_libro (prestamo_id, libro_id)
 VALUES (90, 10);
 
-/*
-select * from nacionalidad;
-select * from autor;
-select * from editorial;
-select * from genero;
-select * from usuario;
-select * from libro;
-select * from prestamo;
-select count(*) from prestamo_libro;
-drop table prestamo_libro;
-
-
-SELECT 
-    autor.nombre AS "Nombre del Autor",
-    nacionalidad.nombre AS "Nacionalidad del Autor",
-    genero.nombre AS "Género del Libro",
-    editorial.nombre AS "Editorial del Libro",
-    libro.titulo AS "Título del Libro"
-FROM libro
-INNER JOIN autor ON libro.autor_id = autor.autor_id
-INNER JOIN nacionalidad ON autor.nacionalidad_id = nacionalidad.nacionalidad_id
-INNER JOIN genero ON libro.genero_id = genero.genero_id
-INNER JOIN editorial ON libro.editorial_id = editorial.editorial_id;
-*/
+COMMIT;
