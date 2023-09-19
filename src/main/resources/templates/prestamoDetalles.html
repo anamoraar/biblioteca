@@ -49,6 +49,14 @@
     <div class="col-md-6 mb-4">
       <div class="card">
         <div class="card-body">
+          <h5 class="card-title">Cantidad de libros:</h5>
+          <p class="card-text" th:text="${cantLibros}"></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
           <h5 class="card-title">Libros:</h5>
           <ul>
             <li th:each="libro : ${libros}" th:text="${libro.displayInfo()}"></li>

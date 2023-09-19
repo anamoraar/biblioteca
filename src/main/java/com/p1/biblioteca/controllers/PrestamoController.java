@@ -21,6 +21,7 @@ import java.util.Optional;
 
 @RestController
 public class PrestamoController {
+    //Repositorios para acceder a los procedimientos almacenados de los paquetes
     @Autowired
     private PrestamoRepository prestamoRepository;
     @Autowired
@@ -30,6 +31,7 @@ public class PrestamoController {
     @Autowired
     private LibroRepository libroRepository;
 
+    //Endpoint que muestra todos los préstamos de la base de datos
     @GetMapping("/prestamos")
     public ModelAndView showAllPrestamos() {
         ModelAndView modelView = new ModelAndView();
@@ -39,25 +41,30 @@ public class PrestamoController {
         return modelView;
     }
 
+    //Endpoint para mostrar el formulario para crear un préstamo (addPrestamo.html)
     @GetMapping("/prestamos/crearprestamo")
     public ModelAndView addPrestamoForm() {
         ModelAndView modelView = new ModelAndView();
         List<Usuario> usuarios = usuarioRepository.findAll();
+        //Se agregan los usuarios para hacer un dropdown menu
         modelView.addObject("usuarios", usuarios);
         modelView.setViewName("addPrestamo.html");
         return modelView;
     }
 
+    //Endpoint que muestra el formulario para agregar libros a un préstamo (addBooksPrestamo.html)
     @GetMapping("/prestamos/librosform")
     public ModelAndView addBooksForm(@RequestParam Long id) {
         ModelAndView modelView = new ModelAndView();
         List<Libro> libros = libroRepository.findAll();
+        //se agregan los libros a la vista para mostrarlos en un checkbox
         modelView.addObject("libros", libros);
         modelView.addObject("prestamo_id", id);
         modelView.setViewName("addBooksPrestamo.html");
         return modelView;
     }
 
+    //Endpoint para mostrar todos los datos de un préstamo (prestamoDetalles.html)
     @GetMapping("/prestamos/detalles")
     public ModelAndView showPrestamoDetails(@RequestParam Long id) {
         ModelAndView modelView = new ModelAndView();
@@ -68,21 +75,24 @@ public class PrestamoController {
             List<Libro> libros = new ArrayList<>();
             for(PrestamoLibro instancia: prestamoLibros)
                 libros.add(instancia.getLibro());
+            //Se agregan los atributos del préstamo que se quieren mostrar en la vista
             modelView.addObject("id", id);
             modelView.addObject("inicio", prestamo.getFechaInicio().toString());
             modelView.addObject("fin", prestamo.getFechaFin().toString());
             modelView.addObject("cedula", prestamo.getUsuario().getCedula());
             modelView.addObject("libros", libros);
+            modelView.addObject("cantLibros", prestamoRepository.cantLibros(id));
         }
         modelView.setViewName("prestamoDetalles.html");
         return modelView;
     }
 
+    //Endpoint para crear un préstamo al usar agregar_prestamo en prestamo_paq
     @PostMapping("/prestamos/crear")
     public ResponseEntity<String> crearPrestamo(String finString, Long cedula) {
         try{
-            Date inicio = Date.valueOf(LocalDate.now());
-            Date fin = Date.valueOf(finString);
+            Date inicio = Date.valueOf(LocalDate.now()); //fecha de inicio del préstamo
+            Date fin = Date.valueOf(finString); //fecha de fin del préstamo
             prestamoRepository.agregarPrestamo(inicio, fin, cedula);
             return ResponseEntity.ok("Préstamo creado");
         } catch (Exception e) {
@@ -90,6 +100,7 @@ public class PrestamoController {
         }
     }
 
+    //Endpoint para agregar los libros seleccionados en el checkbox al préstamo
     @PostMapping("/prestamos/agregarlibros")
     public ResponseEntity<String> agregarLibros(Long prestamo_id, String libros_IDs) {
         String[] libros = libros_IDs.split(",");
@@ -101,10 +112,12 @@ public class PrestamoController {
                 todos_disponibles = false;
             }
         }
+        //Si algún libro no tiene disponibilidad, se agregan los otros y se notifica el problema
         if(todos_disponibles) return ResponseEntity.ok("Libros agregados");
-        else return ResponseEntity.badRequest().body("Error");
+        else return ResponseEntity.badRequest().body("Libros sin disponibilidad");
     }
 
+    //Endpoint para eliminar un préstamo, se elimina en cascada los registros de prestamo_libro
     @DeleteMapping("/prestamos/eliminar/{id}")
     public ResponseEntity<?> deletePrestamo(@PathVariable("id") Long id) {
         prestamoRepository.eliminarPrestamo(id);

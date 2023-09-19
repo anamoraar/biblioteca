@@ -39,4 +39,7 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
 
     @Procedure(value = "amora.libro_paq.eliminar_libro")
     void eliminarLibro(@Param("p_libro_id") Long libro_id);
+
+    @Query(value = "SELECT amora.libro_paq.cant_clientes_prestamo(:p_libro_id) FROM DUAL", nativeQuery = true)
+    int cantClientes(@Param("p_libro_id") Long libro_id);
 }

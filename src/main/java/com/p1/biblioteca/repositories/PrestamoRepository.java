@@ -32,4 +32,7 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
     @Procedure(value = "amora.prestamo_paq.eliminar_prestamo")
     void eliminarPrestamo(@Param("p_prestamo_id") Long prestamoID);
 
+    @Query(value = "SELECT amora.prestamo_paq.cant_libros(:p_prestamo_id) FROM DUAL", nativeQuery = true)
+    int cantLibros(@Param("p_prestamo_id") Long prestamo_id);
+
 }

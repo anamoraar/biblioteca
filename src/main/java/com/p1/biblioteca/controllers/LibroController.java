@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 public class LibroController {
-
+    //Repositorios para acceder a los procedimientos almacenados de los paquetes
     @Autowired
     private LibroRepository libroRepository;
     @Autowired
@@ -26,6 +26,7 @@ public class LibroController {
     @Autowired
     private PrestamoLibroRepository prestamoLibroRepository;
 
+    //Endpoint que muestra todos los libros de la base de datos
     @GetMapping("/libros")
     public ModelAndView showAllBooks() {
         ModelAndView modelView = new ModelAndView();
@@ -35,12 +36,14 @@ public class LibroController {
         return modelView;
     }
 
+    //Endpoint para mostrar el formulario para crear un libro (addLibro.html)
     @GetMapping("/libros/crearlibro")
     public ModelAndView addBookForm(){
         ModelAndView modelView = new ModelAndView();
         List<Autor> autores = autorRepository.findAll();
         List<Editorial> editoriales = editorialRepository.findAll();
         List<Genero> generos = generoRepository.findAll();
+        //se agregan los autores, editoriales y géneros para hacer los dropdown menus
         modelView.addObject("autores",autores);
         modelView.addObject("editoriales",editoriales);
         modelView.addObject("generos",generos);
@@ -48,6 +51,7 @@ public class LibroController {
         return modelView;
     }
 
+    //Endpoint para mostrar todos los datos asociados a un libro (libroDetalles.html)
     @GetMapping("/libros/detalles")
     public ModelAndView showBookDetails(@RequestParam Long id) {
         ModelAndView modelView = new ModelAndView();
@@ -63,11 +67,13 @@ public class LibroController {
             modelView.addObject("autor", libro.getAutor().getFullName());
             modelView.addObject("editorial", libro.getEditorial().getNombre());
             modelView.addObject("genero", libro.getGenero().getNombre());
+            modelView.addObject("cantClientes", libroRepository.cantClientes(id));
         }
         modelView.setViewName("libroDetalles.html");
         return modelView;
     }
 
+    //Endpoint para mostrar el formulario para editar un libro (editLibro.html)
     @GetMapping("/libros/editarlibro")
     public ModelAndView editLibroForm(@RequestParam Long id){
         ModelAndView modelView = new ModelAndView();
@@ -84,6 +90,7 @@ public class LibroController {
         return modelView;
     }
 
+    //Endpoint que crea un libro al usar agregar_libro en libro_paq
     @PostMapping("/libros/agregar")
     public ResponseEntity<String> agregarLibro(@Param("p_titulo") String titulo, @Param("p_anyo_publicacion") Integer publicacion,
                                                @Param("p_descripcion") String descripcion, @Param("p_disponibilidad") Integer disponibilidad,
@@ -97,6 +104,7 @@ public class LibroController {
         }
     }
 
+    //Endpoint que hace la actualización de un libro con actualizar_libro de libro_paq
     @PutMapping("/libros/update/{id}")
     public ResponseEntity<?> updateBook(@Param("p_titulo") String titulo, @Param("p_anyo_publicacion") Integer publicacion,
                                         @Param("p_descripcion") String descripcion, @Param("p_disponibilidad") Integer disponibilidad,
@@ -105,13 +113,14 @@ public class LibroController {
         Optional<Libro> libroOptional = libroRepository.findLibroById(id);
         if(libroOptional.isPresent()){
             if(titulo.equals("") || descripcion.equals("") || publicacion == null || autor_id == null || genero_id == null || editorial_id == null)
-                return ResponseEntity.badRequest().body("Llene todos los campos");
+                return ResponseEntity.badRequest().body("Campos incompletos");
             libroRepository.actualizarLibro(id, titulo, publicacion, descripcion, disponibilidad, autor_id, genero_id, editorial_id);
             return ResponseEntity.ok("Libro actualizado");
         }
         return ResponseEntity.badRequest().body("Error");
     }
 
+    //Endpoint para eliminar un libro (siempre y cuando no tenga préstamos asociados)
     @DeleteMapping("/libros/eliminar/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable("id") Long id) {
         List<PrestamoLibro> prestamoLibros = prestamoLibroRepository.findPrestamoLibroByLibro(id);
