@@ -133,67 +133,67 @@ INSERT INTO genero (genero_id, nombre) VALUES (genero_seq.NEXTVAL, 'Novela de É
 
 -- Inserción de registros para usuario
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (1, 'Admin', '', 'admin@example.com', 'contadmin22');
+VALUES (1, 'Admin', 'User', 'admin@example.com', 'contadmin22');
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (123456789, 'Luis', 'Castro', 'luis.castro@example.com', 'luis12');
+VALUES (123456789, 'Luis', 'Castro', 'luis.castro@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (234567890, 'Marta', 'González', 'marta.gonzalez@example.com', 'marta45');
+VALUES (234567890, 'Marta', 'González', 'marta.gonzalez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (345678901, 'Carlos', 'López', 'carlos.lopez@example.com', 'carl67');
+VALUES (345678901, 'Carlos', 'López', 'carlos.lopez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (456789012, 'Ana', 'Martínez', 'ana.martinez@example.com', 'ana89');
+VALUES (456789012, 'Ana', 'Martínez', 'ana.martinez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (567890123, 'Pedro', 'Sánchez', 'pedro.sanchez@example.com', 'pedr01');
+VALUES (567890123, 'Pedro', 'Sánchez', 'pedro.sanchez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (678901234, 'Laura', 'Ramírez', 'laura.ramirez@example.com', 'laur23');
+VALUES (678901234, 'Laura', 'Ramírez', 'laura.ramirez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (789012345, 'Sergio', 'Hernández', 'sergio.hernandez@example.com', 'serg45');
+VALUES (789012345, 'Sergio', 'Hernández', 'sergio.hernandez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (890123456, 'Carmen', 'Gómez', 'carmen.gomez@example.com', 'carm67');
+VALUES (890123456, 'Carmen', 'Gómez', 'carmen.gomez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (123789456, 'Andrés', 'Fernández', 'andres.fernandez@example.com', 'andr89');
+VALUES (123789456, 'Andrés', 'Fernández', 'andres.fernandez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (234789123, 'Isabel', 'Díaz', 'isabel.diaz@example.com', 'isab01');
+VALUES (234789123, 'Isabel', 'Díaz', 'isabel.diaz@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (345890234, 'Pablo', 'Torres', 'pablo.torres@example.com', 'pabl23');
+VALUES (345890234, 'Pablo', 'Torres', 'pablo.torres@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (456789345, 'Elena', 'Luna', 'elena.luna@example.com', 'elen01');
+VALUES (456789345, 'Elena', 'Luna', 'elena.luna@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (567890456, 'Diego', 'Rodríguez', 'diego.rodriguez@example.com', 'dieg23');
+VALUES (567890456, 'Diego', 'Rodríguez', 'diego.rodriguez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (678901567, 'Valeria', 'Chávez', 'valeria.chavez@example.com', 'vale45');
+VALUES (678901567, 'Valeria', 'Chávez', 'valeria.chavez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (789012678, 'Ricardo', 'Lara', 'ricardo.lara@example.com', 'rica67');
+VALUES (789012678, 'Ricardo', 'Lara', 'ricardo.lara@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (890123789, 'Natalia', 'Ortega', 'natalia.ortega@example.com', 'nata89');
+VALUES (890123789, 'Natalia', 'Ortega', 'natalia.ortega@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (123890890, 'Miguel', 'Silva', 'miguel.silva@example.com', 'migu01');
+VALUES (123890890, 'Miguel', 'Silva', 'miguel.silva@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (234567567, 'Luisa', 'Pacheco', 'luisa.pacheco@example.com', 'luis23');
+VALUES (234567567, 'Luisa', 'Pacheco', 'luisa.pacheco@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (345678678, 'Roberto', 'Castro', 'roberto.castro@example.com', 'robe45');
+VALUES (345678678, 'Roberto', 'Castro', 'roberto.castro@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (456789789, 'Alicia', 'Guerra', 'alicia.guerra@example.com', 'alic67');
+VALUES (456789789, 'Alicia', 'Guerra', 'alicia.guerra@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (567890890, 'Javier', 'Rojas', 'javier.rojas@example.com', 'javi89');
+VALUES (567890890, 'Javier', 'Rojas', 'javier.rojas@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (678901901, 'Josefina', 'González', 'josefina.gonzalez@example.com', 'jose01');
+VALUES (678901901, 'Josefina', 'González', 'josefina.gonzalez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (789012012, 'Miriam', 'López', 'miriam.lopez@example.com', 'miri23');
+VALUES (789012012, 'Miriam', 'López', 'miriam.lopez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (890123123, 'Sofía', 'Barrantes', 'sofia.barrantes@example.com', 'sofi45');
+VALUES (890123123, 'Sofía', 'Barrantes', 'sofia.barrantes@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (123890234, 'Carlos', 'Herrera', 'carlos.herrera@example.com', 'andr67');
+VALUES (123890234, 'Carlos', 'Herrera', 'carlos.herrera@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (234567345, 'Valeria', 'Torres', 'valeria.torres@example.com', 'vale89');
+VALUES (234567345, 'Valeria', 'Torres', 'valeria.torres@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (345678456, 'Joel', 'Molina', 'joel.molina@example.com', 'joel17');
+VALUES (345678456, 'Joel', 'Molina', 'joel.molina@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (456789567, 'Nicole', 'Ramírez', 'laura.ramirez@example.com', 'nico23');
+VALUES (456789567, 'Nicole', 'Ramírez', 'laura.ramirez@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (567890678, 'Emmanuel', 'Vega', 'Emmanuel.vega@example.com', 'emms13');
+VALUES (567890678, 'Emmanuel', 'Vega', 'Emmanuel.vega@example.com', null);
 INSERT INTO usuario (cedula, nombre, apellido, email, contrasenya)
-VALUES (678901789, 'Adriana', 'Pérez', 'adriana.perez@example.com', 'adri67');
+VALUES (678901789, 'Adriana', 'Pérez', 'adriana.perez@example.com', null);
 
 
 -- Inserción de registros para libro

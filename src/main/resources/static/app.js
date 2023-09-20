@@ -51,9 +51,8 @@ $(document).ready(function () {
         var nombre = $("#nombre").val();
         var apellido = $("#apellido").val();
         var email = $("#email").val();
-        var contrasenya = $("#cont").val();
         //Se verifica que los campos obligatorios se encuentren llenos para enviar los datos al servidor
-        if (cedula === "" || nombre === "" || apellido === "" || email === "" || contrasenya === "") {
+        if (cedula === "" || nombre === "" || apellido === "" || email === "") {
             $("#error1").css("display", "block");
             $("#error1").text("Llene todos los campos");
             $("#error1").delay(3000)
@@ -69,8 +68,7 @@ $(document).ready(function () {
                     cedula: cedula,
                     nombre: nombre,
                     apellido: apellido,
-                    email: email,
-                    contrasenya: contrasenya,
+                    email: email
                 },
                 url: "/usuarios/agregar",
                 success: function (data) {
@@ -103,15 +101,13 @@ $(document).ready(function () {
         var nombre = $("#nombre2").val();
         var apellido = $("#apellido2").val();
         var email = $("#email2").val();
-        var contrasenya = $("#cont2").val();
         $.ajax({
             type: "PUT",
             url: "/usuarios/update/" + cedula,
             data: {
                 nombre: nombre,
                 apellido: apellido,
-                email: email,
-                contrasenya: contrasenya,
+                email: email
             },
             success: function (data, statusText, xhr) {
                 $("#form2")[0].reset();
@@ -146,7 +142,7 @@ $(document).ready(function () {
                     });
                 },
                 error: function (xhr, textStatus) {
-                    alert("Error al eliminar el usuario");
+                    alert("Usuario tiene préstamos asociados");
                 },
             });
         }

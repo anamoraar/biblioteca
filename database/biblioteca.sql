@@ -48,7 +48,7 @@ CREATE TABLE usuario(
     nombre VARCHAR2 (25) NOT NULL,
     apellido VARCHAR2 (30) NOT NULL,
     email VARCHAR2 (45) NOT NULL,
-    contrasenya VARCHAR2 (50) NOT NULL,
+    contrasenya VARCHAR2 (50),
     CONSTRAINT usuario_pk PRIMARY KEY (cedula)
 );
 
@@ -117,15 +117,13 @@ CREATE OR REPLACE PACKAGE usuario_paq AS
         p_cedula usuario.cedula%TYPE,
         p_nombre usuario.nombre%TYPE,
         p_apellido usuario.apellido%TYPE,
-        p_email usuario.email%TYPE,
-        p_contrasenya usuario.contrasenya%TYPE
+        p_email usuario.email%TYPE
     );
     PROCEDURE actualizar_usuario(
         p_cedula usuario.cedula%TYPE,
         p_nombre usuario.nombre%TYPE,
         p_apellido usuario.apellido%TYPE,
-        p_email usuario.email%TYPE,
-        p_contrasenya usuario.contrasenya%TYPE
+        p_email usuario.email%TYPE
     );
     PROCEDURE eliminar_usuario(p_cedula usuario.cedula%TYPE);
     PROCEDURE iniciar_sesion(p_email usuario.email%TYPE, p_contrasenya usuario.contrasenya%TYPE);
@@ -139,10 +137,9 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
             p_cedula usuario.cedula%TYPE,
             p_nombre usuario.nombre%TYPE,
             p_apellido usuario.apellido%TYPE,
-            p_email usuario.email%TYPE,
-            p_contrasenya usuario.contrasenya%TYPE) AS
+            p_email usuario.email%TYPE) AS
     BEGIN
-        INSERT INTO usuario VALUES (p_cedula, p_nombre, p_apellido, p_email, p_contrasenya);
+        INSERT INTO usuario VALUES (p_cedula, p_nombre, p_apellido, p_email, null);
         COMMIT;
         EXCEPTION WHEN OTHERS THEN 
             RAISE_APPLICATION_ERROR(-20001, 'Usuario repetido');
@@ -153,14 +150,12 @@ CREATE OR REPLACE PACKAGE BODY usuario_paq AS
         p_cedula usuario.cedula%TYPE,
         p_nombre usuario.nombre%TYPE,
         p_apellido usuario.apellido%TYPE,
-        p_email usuario.email%TYPE,
-        p_contrasenya usuario.contrasenya%TYPE) AS
+        p_email usuario.email%TYPE) AS
     BEGIN
         UPDATE usuario
         SET nombre = p_nombre,
             apellido = p_apellido,
-            email = p_email,
-            contrasenya = p_contrasenya
+            email = p_email
         WHERE cedula = p_cedula;
         COMMIT;
     END actualizar_usuario;

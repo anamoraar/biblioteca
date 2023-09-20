@@ -18,7 +18,7 @@ public class Usuario {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "contrasenya", nullable = false)
+    @Column(name = "contrasenya")
     private String contrasenya;
 
     public Long getCedula() {

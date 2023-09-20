@@ -23,15 +23,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
     void agregarUsuario(@Param("p_cedula") Long cedula,
                         @Param("p_nombre") String nombre,
                         @Param("p_apellido") String apellido,
-                        @Param("p_email") String email,
-                        @Param("p_contrasenya") String contrasenya);
+                        @Param("p_email") String email);
 
     @Procedure(value = "amora.usuario_paq.actualizar_usuario")
     void actualizarUsuario(@Param("p_cedula") Long cedula,
                         @Param("p_nombre") String nombre,
                         @Param("p_apellido") String apellido,
-                        @Param("p_email") String email,
-                        @Param("p_contrasenya") String contrasenya);
+                        @Param("p_email") String email);
 
     @Procedure(value = "amora.usuario_paq.eliminar_usuario")
     void eliminarUsuario(@Param("p_cedula") Long cedula);

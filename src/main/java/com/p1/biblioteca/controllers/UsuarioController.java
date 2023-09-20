@@ -68,10 +68,9 @@ public class UsuarioController {
     //Endpoint que crea un nuevo usuario usando agregar_usuario del paquete usuario_paq
     @PostMapping("/usuarios/agregar")
     public ResponseEntity<String> agregarUsuario(@RequestParam Long cedula, @RequestParam String nombre,
-                                                 @RequestParam String apellido, @RequestParam String email,
-                                                 @RequestParam String contrasenya) {
+                                                 @RequestParam String apellido, @RequestParam String email) {
         try{
-            usuarioRepository.agregarUsuario(cedula, nombre, apellido, email, contrasenya);
+            usuarioRepository.agregarUsuario(cedula, nombre, apellido, email);
             return ResponseEntity.ok("Usuario agregado");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error");
@@ -81,14 +80,13 @@ public class UsuarioController {
     //Endpoint que hace la actualización de un usuario usando un procedimiento almacenado de usuario_paq
     @PutMapping("/usuarios/update/{cedula}")
     public ResponseEntity<?> updateUsuario(@PathVariable("cedula") Long cedula, @RequestParam String nombre,
-                                           @RequestParam String apellido, @RequestParam String email,
-                                           @RequestParam String contrasenya){
+                                           @RequestParam String apellido, @RequestParam String email){
         Optional<Usuario> usuarioOptional = usuarioRepository.findUsuarioById(cedula);
         if(usuarioOptional.isPresent()){
             //Se verifica que todos los datos estén llenos
-            if(nombre.equals("") || apellido.equals("") || email.equals("") || contrasenya.equals(""))
+            if(nombre.equals("") || apellido.equals("") || email.equals(""))
                 return ResponseEntity.badRequest().body("Campos incompletos");
-            usuarioRepository.actualizarUsuario(cedula, nombre, apellido, email, contrasenya);
+            usuarioRepository.actualizarUsuario(cedula, nombre, apellido, email);
             return ResponseEntity.ok("Usuario actualizado");
         }
         return ResponseEntity.badRequest().body("Error");
